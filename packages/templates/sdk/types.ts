@@ -26,6 +26,34 @@ export const TEMPLATE_OCCASIONS = [
 ] as const
 export type TemplateOccasion = (typeof TEMPLATE_OCCASIONS)[number]
 
+/**
+ * Capabilities a template can render. The editor reads `supportedFeatures` from
+ * the manifest and hides form tabs for anything the chosen theme ignores.
+ */
+export const TEMPLATE_FEATURES = [
+  'opening',
+  'hosts',
+  'events',
+  'loveStory',
+  'media',
+  'gallery',
+  'audio',
+  'video',
+  'gifts',
+  'rsvp',
+  'wishes',
+  'liveStream',
+  'socialKit',
+  'travelInfo',
+  'entourage',
+  'coHosts',
+  'additionalNotes',
+  'closing',
+  'qrCheckin',
+  'privatePin',
+] as const
+export type TemplateFeature = (typeof TEMPLATE_FEATURES)[number]
+
 export type TemplatePalette = {
   id: string
   name: string
@@ -47,6 +75,8 @@ export type TemplateManifest = {
   sortOrder: number
   isVisible: boolean
   occasions: readonly TemplateOccasion[]
+  /** Capabilities the theme actually renders; the editor filters tabs by this. */
+  supportedFeatures: readonly TemplateFeature[]
   /** Production themes ship at least three palettes. */
   palettes: readonly TemplatePalette[]
   /** Fonts the host should load before mounting the theme. */

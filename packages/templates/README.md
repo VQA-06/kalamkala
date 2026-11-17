@@ -22,6 +22,7 @@ idempotent and leave the container empty.
 | Export | Purpose |
 | --- | --- |
 | `TemplateManifest`, `TemplatePalette`, `TemplateFramework`, `TemplateOccasion` | Catalog metadata: id, name, tier, occasions, palettes |
+| `TEMPLATE_FEATURES`, `TemplateFeature` | Capability names a theme declares in the required `supportedFeatures`; the editor hides form tabs for anything unsupported |
 | `TemplateContext`, `GuestContext`, `PublicWish`, `RsvpSummary` | What a theme receives |
 | `TemplateActions`, `TemplateUtils`, `TemplateRuntimeState` | Injected behaviour: RSVP submit, media URLs, date/currency formatting |
 | `createTemplateContext(input)` | Builds the context with defaults; used by hosts, previews, and tests |
@@ -76,8 +77,9 @@ pnpm new:template --id taman-sore --name "Taman Sore" --tier PREMIUM \
 ```
 
 The CLI copies `_starters/<framework>` to `packages/templates/<id>` and writes a
-new `manifest.ts` (`sortOrder` 100, `isVisible` true, starter palette). It does
-not edit the registry. Next steps, also printed by the CLI:
+new `manifest.ts` (`sortOrder` 100, `isVisible` true, starter palette, and the
+starter's `supportedFeatures`). It does not edit the registry. Next steps, also
+printed by the CLI:
 
 1. Register it in `registry.ts`: import its `manifest` statically and add an
    entry with `load: () => import('./<id>/index.js').then((m) => m.default)` and

@@ -8,6 +8,7 @@ export const manifest: TemplateManifest = {
   sortOrder: 999,
   isVisible: false,
   occasions: ['pernikahan'],
+  supportedFeatures: ['opening', 'events', 'rsvp', 'wishes'],
   palettes: [
     {
       id: 'bawaan',

@@ -20,7 +20,12 @@ import { fileURLToPath } from 'node:url'
 import { manifest as reactStarterManifest } from '../_starters/react/manifest.js'
 import { manifest as vanillaStarterManifest } from '../_starters/vanilla/manifest.js'
 import { TEMPLATE_OCCASIONS } from '../sdk/types.js'
-import type { TemplateOccasion, TemplatePalette } from '../sdk/types.js'
+import type {
+  TemplateFeature,
+  TemplateManifest,
+  TemplateOccasion,
+  TemplatePalette,
+} from '../sdk/types.js'
 
 const PACKAGE_ROOT = fileURLToPath(new URL('..', import.meta.url))
 const STARTERS_DIR = join(PACKAGE_ROOT, '_starters')
@@ -175,10 +180,11 @@ const askValidated = async <T>(
   }
 }
 
+const starterManifestFor = (framework: StarterFramework): TemplateManifest =>
+  framework === 'react' ? reactStarterManifest : vanillaStarterManifest
+
 const starterPalette = (framework: StarterFramework): TemplatePalette => {
-  const starterManifest =
-    framework === 'react' ? reactStarterManifest : vanillaStarterManifest
-  const palette = starterManifest.palettes[0]
+  const palette = starterManifestFor(framework).palettes[0]
   if (palette === undefined) {
     throw new Error(`Starter ${framework} tidak memiliki palette bawaan`)
   }
@@ -191,6 +197,7 @@ const renderManifest = (input: {
   tier: InvitationTier
   framework: StarterFramework
   occasions: readonly TemplateOccasion[]
+  supportedFeatures: readonly TemplateFeature[]
   palette: TemplatePalette
 }): string => {
   const paletteLines = Object.entries(input.palette.tokens)
@@ -207,6 +214,7 @@ export const manifest: TemplateManifest = {
   sortOrder: 100,
   isVisible: true,
   occasions: [${input.occasions.map((occasion) => JSON.stringify(occasion)).join(', ')}],
+  supportedFeatures: [${input.supportedFeatures.map((feature) => JSON.stringify(feature)).join(', ')}],
   palettes: [
     {
       id: ${JSON.stringify(input.palette.id)},
@@ -280,6 +288,7 @@ const main = async (): Promise<void> => {
       framework,
       occasions,
       palette: starterPalette(framework),
+      supportedFeatures: starterManifestFor(framework).supportedFeatures,
     })
 
     if (flags.dryRun) {
