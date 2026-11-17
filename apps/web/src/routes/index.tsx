@@ -1,48 +1,136 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import { LazyMotion } from 'motion/react'
 
-export const Route = createFileRoute('/')({ component: Home })
+import { CatalogTeaser } from '../components/landing/CatalogTeaser'
+import { Faq } from '../components/landing/Faq'
+import { Features } from '../components/landing/Features'
+import { PhonePreview } from '../components/landing/PhonePreview'
+import { Pricing } from '../components/landing/Pricing'
 
-const DETAILS = [
-  { title: 'Undangan', body: 'Satu undangan untuk setiap tamu.' },
-  { title: 'Acara', body: 'Jadwal dan lokasi dalam satu halaman.' },
-  { title: 'RSVP', body: 'Konfirmasi kehadiran langsung tercatat.' },
-]
+const loadMotionFeatures = () => import('motion/react').then((module) => module.domAnimation)
 
-function Home() {
+export const Route = createFileRoute('/')({
+  head: () => ({
+    meta: [
+      { title: 'Kalamkala — Undangan digital untuk perayaan Indonesia' },
+      {
+        name: 'description',
+        content:
+          'Susun undangan pernikahan dan perayaan Indonesia dalam satu tautan: undangan per tamu, galeri WebP, RSVP, QR check-in, dan amplop digital.',
+      },
+      {
+        property: 'og:title',
+        content: 'Kalamkala — Undangan digital untuk perayaan Indonesia',
+      },
+      {
+        property: 'og:description',
+        content:
+          'Undangan per tamu, RSVP, QR check-in, dan amplop digital untuk perayaan Indonesia. Susun gratis, bayar saat menerbitkan.',
+      },
+      { property: 'og:type', content: 'website' },
+    ],
+  }),
+  component: LandingPage,
+})
+
+function LandingHeader() {
   return (
-    <div className="mx-auto w-full max-w-3xl px-6 py-16 sm:py-24">
-      <header className="flex items-baseline justify-between gap-6 border-b border-line pb-6">
-        <p className="font-serif text-lg tracking-tight">Kalamkala</p>
+    <header className="flex flex-wrap items-baseline justify-between gap-4 border-b border-line py-6">
+      <div className="flex items-baseline gap-4">
+        <Link to="/" className="font-display text-2xl tracking-tight text-ink">
+          Kalamkala
+        </Link>
+        <span className="hidden text-[0.69rem] font-semibold uppercase tracking-[0.18em] text-champagne sm:inline">
+          Undangan digital
+        </span>
+      </div>
+      <nav className="flex items-center gap-6 text-sm">
+        <Link to="/katalog" className="text-ink/70 transition-colors hover:text-ink">
+          Katalog
+        </Link>
+        <Link to="/login" className="text-ink/70 transition-colors hover:text-ink">
+          Masuk
+        </Link>
+      </nav>
+    </header>
+  )
+}
+
+function Hero() {
+  return (
+    <section className="grid gap-14 pb-16 pt-14 sm:pt-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-10">
+      <div>
         <p className="text-[0.69rem] font-semibold uppercase tracking-[0.18em] text-champagne">
-          Undangan Digital
+          Undangan digital untuk perayaan Indonesia
         </p>
-      </header>
-
-      <main className="mt-16">
-        <h1 className="max-w-2xl font-serif text-4xl leading-[1.08] sm:text-5xl">
-          Undangan perayaan Indonesia dalam satu tautan yang tenang.
+        <h1 className="mt-5 max-w-xl font-display text-5xl leading-[1.02] text-ink sm:text-6xl">
+          Undangan perayaan, disusun dengan tenang.
         </h1>
-        <p className="mt-6 max-w-xl text-[0.98rem] leading-7 text-ink/80">
-          Tamu membuka undangan, membaca jadwal, dan mengonfirmasi kehadiran tanpa
-          memasang aplikasi. Setiap undangan disusun dari templat yang rapi, siap
-          dibagikan lewat WhatsApp.
+        <p className="mt-6 max-w-lg text-[0.98rem] leading-7 text-ink/75">
+          Kalamkala menyatukan cerita, jadwal acara, galeri, RSVP, dan amplop digital dalam
+          satu tautan. Tamu membukanya tanpa memasang aplikasi.
         </p>
 
-        <dl className="mt-16 grid divide-y divide-line border-t border-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          {DETAILS.map((detail) => (
-            <div key={detail.title} className="py-6 sm:px-6 sm:first:pl-0 sm:last:pr-0">
-              <dt className="text-[0.69rem] font-semibold uppercase tracking-[0.18em] text-champagne">
-                {detail.title}
-              </dt>
-              <dd className="mt-2 text-sm leading-6 text-ink/75">{detail.body}</dd>
-            </div>
-          ))}
-        </dl>
-      </main>
+        <div className="mt-9 flex flex-wrap items-center gap-5">
+          <Link
+            to="/login"
+            search={{ redirect: '/dashboard' }}
+            className="inline-block border border-ink bg-ink px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-champagne hover:border-champagne"
+          >
+            Mulai menyusun
+          </Link>
+          <Link
+            to="/katalog"
+            className="border-b border-champagne pb-1 text-sm font-semibold text-ink"
+          >
+            Lihat katalog
+          </Link>
+        </div>
 
-      <footer className="mt-16 border-t border-line pt-6 text-xs tracking-wide text-champagne">
-        Kalamkala — undangan untuk perayaan di Indonesia
-      </footer>
-    </div>
+        <p className="mt-10 border-t border-line pt-5 text-xs leading-5 text-ink/55">
+          Susun gratis. Bayar hanya saat undangan siap diterbitkan.
+        </p>
+      </div>
+
+      <div className="flex justify-center lg:justify-end">
+        <PhonePreview />
+      </div>
+    </section>
+  )
+}
+
+function LandingFooter() {
+  return (
+    <footer className="border-t border-line">
+      <div className="flex flex-wrap items-baseline justify-between gap-4 py-8 text-xs text-ink/55">
+        <p>© 2026 Kalamkala. Undangan digital untuk perayaan Indonesia.</p>
+        <nav className="flex items-center gap-5">
+          <Link to="/katalog" className="text-champagne">
+            Katalog
+          </Link>
+          <Link to="/login" className="text-champagne">
+            Masuk
+          </Link>
+        </nav>
+      </div>
+    </footer>
+  )
+}
+
+function LandingPage() {
+  return (
+    <LazyMotion features={loadMotionFeatures} strict>
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <LandingHeader />
+        <main>
+          <Hero />
+          <Features />
+          <Pricing />
+          <Faq />
+          <CatalogTeaser />
+        </main>
+        <LandingFooter />
+      </div>
+    </LazyMotion>
   )
 }
