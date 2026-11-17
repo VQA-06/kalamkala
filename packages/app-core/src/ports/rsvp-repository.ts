@@ -24,9 +24,22 @@ export type CreateRsvpInput = {
   isHidden: boolean
 }
 
+export type RsvpPageOptions = {
+  /** Opaque cursor returned by the previous page, or null for the first page. */
+  cursor: string | null
+  limit: number
+}
+
+export type RsvpPage = {
+  items: StoredRsvp[]
+  nextCursor: string | null
+}
+
 export type RsvpRepository = {
   create: (input: CreateRsvpInput) => Promise<StoredRsvp>
   listByInvitation: (invitationId: string) => Promise<StoredRsvp[]>
+  /** Public wall: visible rows only, newest first, cursor-paginated. */
+  listPublicPage: (invitationId: string, options: RsvpPageOptions) => Promise<RsvpPage>
   setReply: (id: string, hostReply: string) => Promise<void>
   setHidden: (id: string, isHidden: boolean) => Promise<void>
 }

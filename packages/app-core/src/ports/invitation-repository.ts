@@ -1,4 +1,9 @@
-import type { InvitationStatus, InvitationTier, MasterInvitation } from '@kalamkala/contracts'
+import type {
+  AppearanceConfig,
+  InvitationStatus,
+  InvitationTier,
+  MasterInvitation,
+} from '@kalamkala/contracts'
 
 /**
  * Persistence shape of an invitation.
@@ -13,6 +18,8 @@ export type StoredInvitation = {
   tier: InvitationTier
   status: InvitationStatus
   content: MasterInvitation
+  /** Theme overrides; null means the template's default appearance applies. */
+  appearance: AppearanceConfig | null
   publishedAt: Date | null
   expiresAt: Date | null
 }
@@ -25,6 +32,7 @@ export type CreateInvitationInput = {
   tier: InvitationTier
   status: InvitationStatus
   content: MasterInvitation
+  appearance: AppearanceConfig | null
   publishedAt: Date | null
   expiresAt: Date | null
 }

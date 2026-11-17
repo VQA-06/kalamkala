@@ -33,6 +33,7 @@ const createInvitation = (overrides: Partial<StoredInvitation> = {}): StoredInvi
   tier: 'BASIC',
   status: 'DRAFT',
   content: {} as unknown as MasterInvitation,
+  appearance: null,
   publishedAt: null,
   expiresAt: null,
   ...overrides,

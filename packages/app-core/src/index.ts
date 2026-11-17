@@ -1,6 +1,7 @@
 export * from './ports/cache.js'
 export * from './ports/clock.js'
 export * from './ports/guest-repository.js'
+export * from './ports/invitation-report-repository.js'
 export * from './ports/invitation-repository.js'
 export * from './ports/logger.js'
 export * from './ports/media-storage.js'

@@ -29,6 +29,7 @@ const createInvitation = (
   tier: 'BASIC',
   status: overrides.status ?? 'ACTIVE',
   content: { events: overrides.events ?? [] } as unknown as MasterInvitation,
+  appearance: null,
   publishedAt: null,
   expiresAt: overrides.expiresAt ?? null,
 })

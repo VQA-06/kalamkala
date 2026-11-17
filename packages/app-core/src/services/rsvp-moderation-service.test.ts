@@ -41,6 +41,7 @@ const createRsvpRepository = (): {
       return { id: 'rsvp_1', ...input, hostReply: null, createdAt: FIXED_NOW }
     },
     listByInvitation: async () => [],
+    listPublicPage: async () => ({ items: [], nextCursor: null }),
     setReply: async () => {},
     setHidden: async () => {},
   }
