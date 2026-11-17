@@ -13,7 +13,7 @@ import {
 } from '@kalamkala/contracts'
 import type { AppearanceConfig, InvitationStatus, MasterInvitation } from '@kalamkala/contracts'
 import { invitations } from '@kalamkala/db-schema'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 import type { AppDatabase } from './database.js'
@@ -156,6 +156,16 @@ export class D1KVInvitationRepository implements InvitationRepository {
       await this.writeCache(invitation)
     }
     return invitation
+  }
+
+  /** Owner dashboard list: D1 only, deliberately not cached. */
+  async listByUserId(userId: string): Promise<StoredInvitation[]> {
+    const rows = await this.db
+      .select()
+      .from(invitations)
+      .where(eq(invitations.userId, userId))
+      .orderBy(desc(invitations.createdAt), desc(invitations.id))
+    return rows.map((row) => this.toStoredInvitation(row))
   }
 
   async create(input: CreateInvitationInput): Promise<StoredInvitation> {
