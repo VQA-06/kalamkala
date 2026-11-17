@@ -1,3 +1,10 @@
+import {
+  ConsoleJsonLogger,
+  D1KVInvitationRepository,
+  D1UserRepository,
+  KvCacheAdapter,
+  createAppDatabase,
+} from '@kalamkala/adapters-cloudflare'
 import type { InvitationStatus, InvitationTier, UserRole } from '@kalamkala/contracts'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequestHeaders } from '@tanstack/react-start/server'
@@ -10,7 +17,7 @@ export type DashboardInvitation = {
   slug: string
   status: InvitationStatus
   tier: InvitationTier
-  createdAt: Date
+  publishedAt: Date | null
 }
 
 export type DashboardData = {
@@ -24,41 +31,21 @@ export type DashboardData = {
   invitations: DashboardInvitation[]
 }
 
-type UserRow = {
-  id: string
-  name: string
-  email: string
-  role: UserRole
-  whatsapp_number: string | null
-}
-
-type InvitationRow = {
-  id: string
-  slug: string
-  status: InvitationStatus
-  tier: InvitationTier
-  created_at: number
-}
-
 /** Real owner data: profile row plus the invitations they own, newest first. */
 export const getDashboardData = createServerFn({ method: 'GET' }).handler(
   async (): Promise<DashboardData | null> => {
     const session = await getAuth().api.getSession({ headers: getRequestHeaders() })
     if (session === null) return null
 
-    const user = await env.DB.prepare(
-      'SELECT id, name, email, role, whatsapp_number FROM users WHERE id = ?1',
-    )
-      .bind(session.user.id)
-      .first<UserRow>()
-
+    const db = createAppDatabase(env.DB)
+    const user = await new D1UserRepository({ db }).findById(session.user.id)
     if (user === null) return null
 
-    const invitations = await env.DB.prepare(
-      'SELECT id, slug, status, tier, created_at FROM invitations WHERE user_id = ?1 ORDER BY created_at DESC',
-    )
-      .bind(user.id)
-      .all<InvitationRow>()
+    const invitations = await new D1KVInvitationRepository({
+      db,
+      cache: new KvCacheAdapter(env.INVITE_KV),
+      logger: new ConsoleJsonLogger({ service: 'kalamkala-web' }),
+    }).listByUserId(user.id)
 
     return {
       user: {
@@ -66,14 +53,14 @@ export const getDashboardData = createServerFn({ method: 'GET' }).handler(
         name: user.name,
         email: user.email,
         role: user.role,
-        whatsappNumber: user.whatsapp_number,
+        whatsappNumber: user.whatsappNumber,
       },
-      invitations: invitations.results.map((row) => ({
-        id: row.id,
-        slug: row.slug,
-        status: row.status,
-        tier: row.tier,
-        createdAt: new Date(row.created_at * 1000),
+      invitations: invitations.map((invitation) => ({
+        id: invitation.id,
+        slug: invitation.slug,
+        status: invitation.status,
+        tier: invitation.tier,
+        publishedAt: invitation.publishedAt,
       })),
     }
   },

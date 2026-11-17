@@ -88,7 +88,7 @@ function AdminPage() {
                     <th className="py-3 pr-4 font-semibold">Order</th>
                     <th className="py-3 pr-4 font-semibold">Jumlah</th>
                     <th className="py-3 pr-4 font-semibold">Status</th>
-                    <th className="py-3 font-semibold">Tanggal</th>
+                    <th className="py-3 font-semibold">Pembayaran</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line">
@@ -104,7 +104,9 @@ function AdminPage() {
                         {STATUS_LABELS[transaction.status]}
                       </td>
                       <td className="py-3 text-ink/80">
-                        {formatDate(new Date(transaction.createdAt))}
+                        {transaction.paidAt === null
+                          ? 'Belum dibayar'
+                          : formatDate(new Date(transaction.paidAt))}
                       </td>
                     </tr>
                   ))}

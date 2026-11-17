@@ -128,7 +128,9 @@ function DashboardPage() {
                   <div>
                     <p className="font-medium text-ink">/u/{invitation.slug}</p>
                     <p className="text-xs text-ink/60">
-                      Dibuat {formatDate(new Date(invitation.createdAt))}
+                      {invitation.publishedAt === null
+                        ? 'Belum terbit'
+                        : `Terbit ${formatDate(new Date(invitation.publishedAt))}`}
                     </p>
                   </div>
                   <p className="text-xs tracking-wide text-ink/70">

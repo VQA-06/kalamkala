@@ -1,4 +1,5 @@
 import { Link, createFileRoute, redirect } from '@tanstack/react-router'
+import { ArrowRight } from '@phosphor-icons/react'
 import { useState } from 'react'
 
 import { authClient } from '../lib/auth-client'
@@ -74,9 +75,12 @@ function LoginPage() {
           type="button"
           onClick={signInWithGoogle}
           disabled={status === 'redirecting'}
-          className="mt-10 flex w-full items-center justify-center border border-ink bg-ink px-5 py-3 text-sm font-semibold text-paper transition-colors hover:bg-champagne disabled:cursor-progress disabled:opacity-70"
+          className="mt-10 flex w-full items-center justify-center gap-2 border border-ink bg-ink px-5 py-3 text-sm font-semibold text-paper transition-colors hover:bg-champagne disabled:cursor-progress disabled:opacity-70"
         >
           {status === 'redirecting' ? 'Mengalihkan…' : 'Lanjutkan dengan Google'}
+          {status === 'redirecting' ? null : (
+            <ArrowRight weight="light" aria-hidden="true" className="size-4" />
+          )}
         </button>
 
         <div className="mt-4 min-h-6" aria-live="polite">
