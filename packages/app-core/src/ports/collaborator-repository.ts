@@ -27,5 +27,6 @@ export type CollaboratorRepository = {
   create: (input: CreateCollaboratorInput) => Promise<StoredCollaborator>
   listByInvitation: (invitationId: string) => Promise<StoredCollaborator[]>
   findById: (id: string) => Promise<StoredCollaborator | null>
+  findByAccessToken: (accessToken: string) => Promise<StoredCollaborator | null>
   delete: (id: string) => Promise<void>
 }

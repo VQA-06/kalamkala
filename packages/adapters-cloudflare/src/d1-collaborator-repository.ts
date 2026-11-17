@@ -59,6 +59,13 @@ export class D1CollaboratorRepository implements CollaboratorRepository {
     return row === undefined ? null : this.toStoredCollaborator(row)
   }
 
+  async findByAccessToken(accessToken: string): Promise<StoredCollaborator | null> {
+    const row = await this.db.query.collaborators.findFirst({
+      where: eq(collaborators.accessToken, accessToken),
+    })
+    return row === undefined ? null : this.toStoredCollaborator(row)
+  }
+
   async delete(id: string): Promise<void> {
     const rows = await this.db
       .delete(collaborators)

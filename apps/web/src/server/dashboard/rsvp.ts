@@ -223,9 +223,9 @@ export const createCollaborator = createServerFn({ method: 'POST' })
         expiresAt,
       })
 
-      // The link and PIN are generator output. Enforcing collaborator
-      // permissions on /u/:slug is a later permission layer.
-      const link = `${resolveSiteUrl()}/u/${encodeURIComponent(invitation.slug)}?k=${encodeURIComponent(accessToken)}`
+      // The link and PIN are generator output for the read-only collaborator
+      // portal; the PIN is verified there and never stored in plain text.
+      const link = `${resolveSiteUrl()}/kolaborator/${encodeURIComponent(accessToken)}`
 
       services.logger.info('dashboard.rsvp.collaborator-created', {
         invitationId: invitation.id,
