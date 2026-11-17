@@ -86,6 +86,31 @@ Use `--remote` for the deployed database. The invitation body is mounted
 client-side by `TemplateHost`; the title, description, and OG meta are rendered
 on the server so link previews work.
 
+## Dashboard, admin and deploy
+
+Customer routes: `/dashboard` (invitation list) and
+`/dashboard/invitations/<id>/editor`, `/guests`, `/rsvp`, `/checkout`. Operator
+routes: `/admin` with `/transactions`, `/templates`, and `/promos`. Wedding
+organisers use `/kolaborator/<token>` plus the PIN issued from the RSVP page;
+the PIN is shown once.
+
+Editor photo uploads go straight to R2 with a presigned PUT. They need an R2 S3
+API token in `apps/web/.dev.vars` (and as Worker secrets in production):
+`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
+`R2_BUCKET_NAME` (default `kalamkala-media`). Photos are re-encoded to WebP in
+the browser before upload.
+
+`INVITATION_TIER_PRICES` (Basic 49.000, Premium 99.000) is provisional until
+Duitku pricing is finalised; the checkout page reads it from contracts.
+
+Deploy runs in `.github/workflows/deploy.yml` on pushes to `main` (or manually):
+install, test, typecheck, build, `wrangler d1 migrations apply DB --remote`,
+`wrangler deploy` from `apps/web`, then `pnpm sync:templates --remote`. It needs
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. Deploying
+requires the build first: the Cloudflare Vite plugin writes
+`.wrangler/deploy/config.json`, which points `wrangler deploy` at the emitted
+`dist/server/wrangler.json`.
+
 ## Scripts
 
 | Command | Effect |
