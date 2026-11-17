@@ -1,0 +1,31 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "kalamkala-web"
+compatibility_date = "2026-11-17"
+compatibility_flags = ["nodejs_compat"]
+main = "@tanstack/react-start/server-entry"
+upload_source_maps = true
+
+[observability]
+enabled = true
+
+[vars]
+# Replace with the R2 public bucket / custom domain once the bucket is connected.
+CDN_BASE_URL = "https://cdn.example.com"
+ENABLE_IMAGE_TRANSFORM = "false"
+PAYMENT_PROVIDER = "SIMULATED"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kalamkala-db"
+# Replace with the id printed by `wrangler d1 create kalamkala-db`.
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "../../packages/db-schema/drizzle"
+
+[[kv_namespaces]]
+binding = "INVITE_KV"
+# Replace with the id printed by `wrangler kv namespace create INVITE_KV`.
+id = "00000000000000000000000000000000"
+
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "kalamkala-media"
