@@ -103,12 +103,21 @@ on the server so link previews work.
 
 ## Dependencies and audit
 
-`pnpm audit` reports one high advisory with no patched release:
-GHSA-fc5q-39xc-vjpf (picomatch <= 4.0.7, ReDoS). Every path is build-time
-tooling — TanStack Router's generator and devtools plugin plus `tinyglobby`
-file discovery — and 4.0.7 is the newest published version, so no override can
-clear it yet. No Worker runtime code imports picomatch. Revisit when a fixed
-release exists.
+Both graphs report the same high advisory, GHSA-fc5q-39xc-vjpf (picomatch
+<= 4.0.7, ReDoS, no patched release as of 2026-11-18):
+
+- `pnpm audit --prod`: 1 high, reached through build tooling declared as a
+  production dependency — `@tailwindcss/vite -> vite -> tinyglobby -> fdir ->
+  picomatch` and `@tanstack/react-start -> @tanstack/router-utils /
+  @tanstack/start-plugin-core -> tinyglobby -> fdir -> picomatch`.
+- `pnpm audit --dev`: 1 high, through `@tanstack/devtools-vite` and
+  `@tanstack/devtools-bundler-core`.
+
+picomatch is a glob matcher used by Vite and the TanStack build plugins; 4.0.7
+is the newest published version, so no override can clear it. It is not
+runtime-reachable: `grep` over `apps/web/dist/client` and `apps/web/dist/server`
+finds no picomatch, and no Worker or browser code imports it. Monitoring
+upstream for a release above 4.0.7.
 
 The earlier GHSA-67mh-4wv8-2f99 (esbuild <= 0.24.2) came through
 `drizzle-kit`'s dev-only `@esbuild-kit` transpiler; `pnpm-workspace.yaml` pins
