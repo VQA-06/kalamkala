@@ -40,6 +40,8 @@ export type CreateInvitationInput = {
 export type InvitationRepository = {
   findById: (id: string) => Promise<StoredInvitation | null>
   findBySlug: (slug: string) => Promise<StoredInvitation | null>
+  /** Owner dashboard list, newest first. */
+  listByUserId: (userId: string) => Promise<StoredInvitation[]>
   create: (input: CreateInvitationInput) => Promise<StoredInvitation>
   updateContent: (id: string, content: MasterInvitation) => Promise<void>
   setStatus: (id: string, status: InvitationStatus, publishedAt: Date | null) => Promise<void>

@@ -81,6 +81,7 @@ const createInvitationRepository = (initial: StoredInvitation): FakeInvitationRe
   const repository: InvitationRepository = {
     findById: async (id) => store.get(id) ?? null,
     findBySlug: async (slug) => [...store.values()].find((row) => row.slug === slug) ?? null,
+    listByUserId: async () => [],
     create: async () => {
       throw new Error('activation tests never create invitations')
     },
