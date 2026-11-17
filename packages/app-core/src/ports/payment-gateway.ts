@@ -64,6 +64,8 @@ export class PaymentGatewayError extends Error {
  * so swapping Duitku in later does not touch UI or database code.
  */
 export type PaymentGatewayPort = {
+  /** Identifies the provider backing this gateway, used to stamp transactions. */
+  readonly provider: PaymentProvider
   createCheckoutSession: (input: CreateCheckoutSessionInput) => Promise<CheckoutSession>
   verifyCallback: (request: PaymentCallbackRequest) => Promise<VerifiedPayment>
 }

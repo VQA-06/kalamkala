@@ -1,0 +1,41 @@
+import type { InvitationStatus, InvitationTier, MasterInvitation } from '@kalamkala/contracts'
+
+/**
+ * Persistence shape of an invitation.
+ * `content` is the editable JSON document; ids and lifecycle columns live
+ * beside it so they can be indexed and queried.
+ */
+export type StoredInvitation = {
+  id: string
+  userId: string
+  slug: string
+  templateId: string
+  tier: InvitationTier
+  status: InvitationStatus
+  content: MasterInvitation
+  publishedAt: Date | null
+  expiresAt: Date | null
+}
+
+export type CreateInvitationInput = {
+  id: string
+  userId: string
+  slug: string
+  templateId: string
+  tier: InvitationTier
+  status: InvitationStatus
+  content: MasterInvitation
+  publishedAt: Date | null
+  expiresAt: Date | null
+}
+
+export type InvitationRepository = {
+  findById: (id: string) => Promise<StoredInvitation | null>
+  findBySlug: (slug: string) => Promise<StoredInvitation | null>
+  create: (input: CreateInvitationInput) => Promise<StoredInvitation>
+  updateContent: (id: string, content: MasterInvitation) => Promise<void>
+  setStatus: (id: string, status: InvitationStatus, publishedAt: Date | null) => Promise<void>
+  /** Warms any read-through cache after publication. */
+  refreshCache: (id: string) => Promise<void>
+  invalidateCache: (id: string) => Promise<void>
+}
