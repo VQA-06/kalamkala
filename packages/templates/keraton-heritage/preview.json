@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "eventCategory": "WEDDING",
+  "seoMeta": {
+    "title": "Raka & Sekar — Undangan Pernikahan Keraton",
+    "description": "Dengan memohon rahmat dan berkah, kami mengundang Anda untuk hadir dalam pernikahan Raka dan Sekar di Pendopo Agung, Yogyakarta.",
+    "ogLandscapePhotoKey": "keraton-heritage/gallery/raka-sekar-02.jpg"
+  },
+  "settings": {
+    "locale": "id",
+    "showPublicRsvpStats": true,
+    "showPublicWishes": true,
+    "hidePlatformWatermark": false
+  },
+  "accessControl": {
+    "isPrivatePinEnabled": false,
+    "pinCode": null,
+    "strictGuestListOnly": false,
+    "defaultMaxPaxPerGuest": 4
+  },
+  "opening": {
+    "headline": "Dengan memohon rahmat dan berkah Tuhan Yang Maha Esa",
+    "subheadline": "Kami bermaksud menyelenggarakan pernikahan putra-putri kami",
+    "quote": "Dan di antara tanda-tanda kebesaran-Nya, Dia menciptakan pasangan-pasangan untukmu agar kamu merasa tenteram kepadanya.",
+    "quoteSource": "QS. Ar-Rum: 21"
+  },
+  "hosts": {
+    "displayOrder": ["primary", "secondary"],
+    "primary": {
+      "fullName": "Raka Aditya Pramudya",
+      "nickname": "Raka",
+      "fatherName": "Bapak Pramudya Wicaksono",
+      "motherName": "Ibu Laras Widuri",
+      "photoKey": "keraton-heritage/hosts/raka.jpg",
+      "instagramHandle": "rakaaditya"
+    },
+    "secondary": {
+      "fullName": "Sekar Ayu Larasati",
+      "nickname": "Sekar",
+      "fatherName": "Bapak Hadi Nugroho",
+      "motherName": "Ibu Sri Widayati",
+      "photoKey": "keraton-heritage/hosts/sekar.jpg",
+      "instagramHandle": "sekarayu"
+    }
+  },
+  "events": [
+    {
+      "id": "akad-nikah",
+      "name": "Akad Nikah",
+      "startsAt": "2027-06-12T08:00:00+07:00",
+      "endsAt": "2027-06-12T10:00:00+07:00",
+      "timezone": "WIB",
+      "venueName": "Pendopo Agung Dalem Kadipaten",
+      "address": "Jalan Rotowijayan No. 5, Panembahan, Kraton, Yogyakarta",
+      "mapsUrl": "https://maps.google.com/?q=Pendopo+Agung+Yogyakarta",
+      "dressCode": "Batik Sogan"
+    },
+    {
+      "id": "resepsi",
+      "name": "Resepsi",
+      "startsAt": "2027-06-12T19:00:00+07:00",
+      "endsAt": "2027-06-12T22:00:00+07:00",
+      "timezone": "WIB",
+      "venueName": "Pendopo Agung Dalem Kadipaten",
+      "address": "Jalan Rotowijayan No. 5, Panembahan, Kraton, Yogyakarta",
+      "mapsUrl": "https://maps.google.com/?q=Pendopo+Agung+Yogyakarta",
+      "dressCode": "Kebaya dan Beskap"
+    }
+  ],
+  "media": {
+    "gallery": [
+      {
+        "key": "keraton-heritage/gallery/raka-sekar-01.jpg",
+        "orientation": "PORTRAIT",
+        "caption": "Langkah pertama menuju pelaminan."
+      },
+      {
+        "key": "keraton-heritage/gallery/raka-sekar-02.jpg",
+        "orientation": "LANDSCAPE",
+        "caption": "Senja di pelataran pendopo."
+      },
+      {
+        "key": "keraton-heritage/gallery/raka-sekar-03.jpg",
+        "orientation": "SQUARE",
+        "caption": "Gamelan yang mengiringi acara."
+      },
+      {
+        "key": "keraton-heritage/gallery/raka-sekar-04.jpg",
+        "orientation": "PORTRAIT",
+        "caption": "Kain sogan warisan keluarga."
+      },
+      {
+        "key": "keraton-heritage/gallery/raka-sekar-05.jpg",
+        "orientation": "LANDSCAPE",
+        "caption": "Pintu masuk Dalem Kadipaten."
+      },
+      {
+        "key": "keraton-heritage/gallery/raka-sekar-06.jpg",
+        "orientation": "SQUARE",
+        "caption": null
+      },
+      {
+        "key": "keraton-heritage/gallery/raka-sekar-07.jpg",
+        "orientation": "PORTRAIT",
+        "caption": "Bunga melati di pelaminan."
+      },
+      {
+        "key": "keraton-heritage/gallery/raka-sekar-08.jpg",
+        "orientation": "LANDSCAPE",
+        "caption": "Cahaya lampion menjelang resepsi."
+      }
+    ],
+    "videoUrl": "https://www.youtube.com/watch?v=keraton-heritage-2027",
+    "audioKey": "keraton-heritage/audio/gamelan-lantern.mp3"
+  },
+  "gifts": {
+    "bankAccounts": [
+      {
+        "bankName": "Bank Mandiri",
+        "accountNumber": "1370012345678",
+        "accountHolder": "Raka Aditya Pramudya"
+      },
+      {
+        "bankName": "Bank BCA",
+        "accountNumber": "5270123456",
+        "accountHolder": "Sekar Ayu Larasati"
+      }
+    ],
+    "qrisImageKey": "keraton-heritage/gifts/qris.png",
+    "physicalAddress": "Kediaman Raka dan Sekar, Jalan Kaliurang KM 8, Sleman, Yogyakarta 55581"
+  },
+  "closing": {
+    "message": "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak, Ibu, dan Saudara berkenan hadir serta memberikan doa restu.",
+    "happyFamilies": [
+      {
+        "name": "Keluarga Pramudya Wicaksono",
+        "photoKey": "keraton-heritage/hosts/family-raka.jpg"
+      },
+      {
+        "name": "Keluarga Hadi Nugroho",
+        "photoKey": null
+      }
+    ]
+  },
+  "modules": {
+    "loveStory": {
+      "enabled": true,
+      "items": [
+        {
+          "date": "2019-08-17",
+          "title": "Pertemuan di Malioboro",
+          "story": "Sebuah sore di Malioboro mempertemukan dua orang yang sedang mencari oleh-oleh untuk keluarga."
+        },
+        {
+          "date": "2021-02-14",
+          "title": "Surat dari Yogyakarta",
+          "story": "Tahun-tahun berikutnya diisi surat, panggilan, dan rencana kecil yang selalu ditunda oleh jarak."
+        },
+        {
+          "date": "2024-12-31",
+          "title": "Tahun Baru di Pendopo",
+          "story": "Di penghujung tahun, keluarga besar bertemu dan membicarakan sesuatu yang lebih serius daripada biasanya."
+        },
+        {
+          "date": null,
+          "title": "Lamaran",
+          "story": "Sebuah cincin, dua keluarga, dan satu pertanyaan yang akhirnya dijawab dengan senyum."
+        }
+      ]
+    },
+    "liveStream": {
+      "enabled": true,
+      "url": "https://www.youtube.com/live/keraton-heritage",
+      "platform": "YouTube"
+    },
+    "socialKit": {
+      "enabled": true,
+      "hashtag": "#RakaSekarMenujuPelaminan",
+      "instagramFilterUrl": "https://www.instagram.com/ar/keraton-heritage/",
+      "caption": "Momen bahagia Raka dan Sekar, silakan bagikan dengan tagar kami."
+    },
+    "travelInfo": {
+      "enabled": true,
+      "venueMapUrl": "https://maps.google.com/?q=Pendopo+Agung+Yogyakarta",
+      "hotels": [
+        {
+          "name": "Hotel Tentrem Yogyakarta",
+          "address": "Jalan AM Sangaji No. 72, Jetis, Yogyakarta",
+          "bookingUrl": "https://www.hoteltentrem.com/",
+          "distanceLabel": "1,8 km dari lokasi"
+        },
+        {
+          "name": "The Phoenix Hotel Yogyakarta",
+          "address": "Jalan Jenderal Sudirman No. 9, Yogyakarta",
+          "bookingUrl": "https://www.phoenixyogya.com/",
+          "distanceLabel": "2,4 km dari lokasi"
+        },
+        {
+          "name": "Grand Mercure Yogyakarta",
+          "address": "Jalan Jenderal Sudirman No. 9, Yogyakarta",
+          "bookingUrl": "https://all.accor.com/",
+          "distanceLabel": "3,1 km dari lokasi"
+        }
+      ]
+    },
+    "entourage": {
+      "enabled": true,
+      "groups": [
+        {
+          "title": "Keluarga Mempelai Pria",
+          "members": ["Bimasena Pramudya", "Retno Wulandari", "Damar Wicaksono"]
+        },
+        {
+          "title": "Keluarga Mempelai Wanita",
+          "members": ["Arya Nugroho", "Ayu Prameswari", "Sinta Widayati"]
+        },
+        {
+          "title": "Sahabat",
+          "members": ["Bagas Ramadhan", "Nadia Kusuma", "Fajar Hidayat"]
+        }
+      ]
+    },
+    "coHosts": {
+      "enabled": true,
+      "items": [
+        {
+          "name": "Bimasena Pramudya",
+          "role": "Adik mempelai pria",
+          "whatsappNumber": "+6281234567890"
+        },
+        {
+          "name": "Ayu Prameswari",
+          "role": "Sahabat mempelai wanita",
+          "whatsappNumber": "+6281298765432"
+        }
+      ]
+    },
+    "additionalNotes": {
+      "enabled": true,
+      "notes": [
+        "Mohon berkenan hadir tepat waktu agar rangkaian acara dapat berjalan khidmat.",
+        "Parkir tersedia di halaman timur pendopo dengan petunjuk dari petugas.",
+        "Bagi tamu dari luar kota, silakan menghubungi penyelenggara untuk bantuan akomodasi."
+      ]
+    },
+    "enableQrCheckin": true
+  }
+}
