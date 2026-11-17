@@ -19,6 +19,9 @@ applied with Wrangler.
 - **Appearance**: `invitations.appearance_json` is nullable and has no default.
   `null` means the host has not overridden the template palette, so renderers
   fall back to the template's first palette.
+- **WhatsApp template**: `invitations.whatsapp_template` is nullable. `null`
+  means the application uses `DEFAULT_WHATSAPP_TEMPLATE` from
+  `@kalamkala/contracts` when composing a guest message.
 - **Reports**: `invitation_reports` stores abuse reports for admin triage. Only a
   `reporter_hash` is persisted; raw IP addresses are never stored.
 - **Booleans**: `integer` columns with `{ mode: 'boolean' }` and an explicit

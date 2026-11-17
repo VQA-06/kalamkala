@@ -186,6 +186,7 @@ export const invitations = sqliteTable(
       .default('DRAFT'),
     contentJson: text('content_json').notNull().default('{}'),
     appearanceJson: text('appearance_json'),
+    whatsappTemplate: text('whatsapp_template'),
     publishedAt: integer('published_at', { mode: 'timestamp' }),
     expiresAt: integer('expires_at', { mode: 'timestamp' }),
     createdAt: createdAtColumn(),

@@ -1,0 +1,1 @@
+ALTER TABLE `invitations` ADD `whatsapp_template` text;
