@@ -33,3 +33,41 @@ export type WaSentStatus = (typeof WA_SENT_STATUSES)[number]
 
 export const PAYMENT_PROVIDERS = ['SIMULATED', 'DUITKU'] as const
 export type PaymentProvider = (typeof PAYMENT_PROVIDERS)[number]
+
+export const EVENT_CATEGORIES = [
+  'WEDDING',
+  'ENGAGEMENT',
+  'KHITANAN',
+  'AQIQAH',
+  'BIRTHDAY',
+  'OTHER',
+] as const
+export type EventCategory = (typeof EVENT_CATEGORIES)[number]
+
+export const LOCALES = ['id', 'en', 'jv', 'su'] as const
+export type Locale = (typeof LOCALES)[number]
+
+export const MEDIA_ORIENTATIONS = ['PORTRAIT', 'LANDSCAPE', 'SQUARE'] as const
+export type MediaOrientation = (typeof MEDIA_ORIENTATIONS)[number]
+
+export const EVENT_TIMEZONES = ['WIB', 'WITA', 'WIT'] as const
+export type EventTimezone = (typeof EVENT_TIMEZONES)[number]
+
+export const SECTION_IDS = [
+  'opening',
+  'hosts',
+  'events',
+  'loveStory',
+  'media',
+  'gifts',
+  'rsvp',
+  'wishes',
+  'liveStream',
+  'socialKit',
+  'travelInfo',
+  'entourage',
+  'coHosts',
+  'additionalNotes',
+  'closing',
+] as const
+export type SectionId = (typeof SECTION_IDS)[number]

@@ -10,11 +10,16 @@ import { z } from 'zod'
 
 import {
   DISCOUNT_TYPES,
+  EVENT_CATEGORIES,
+  EVENT_TIMEZONES,
   GUEST_CATEGORIES,
   INVITATION_STATUSES,
   INVITATION_TIERS,
+  LOCALES,
+  MEDIA_ORIENTATIONS,
   PAYMENT_PROVIDERS,
   RSVP_ATTENDANCES,
+  SECTION_IDS,
   TRANSACTION_STATUSES,
   USER_ROLES,
   WA_SENT_STATUSES,
@@ -29,3 +34,9 @@ export const transactionStatusSchema = z.enum(TRANSACTION_STATUSES)
 export const discountTypeSchema = z.enum(DISCOUNT_TYPES)
 export const waSentStatusSchema = z.enum(WA_SENT_STATUSES)
 export const paymentProviderSchema = z.enum(PAYMENT_PROVIDERS)
+
+export const eventCategorySchema = z.enum(EVENT_CATEGORIES)
+export const localeSchema = z.enum(LOCALES)
+export const mediaOrientationSchema = z.enum(MEDIA_ORIENTATIONS)
+export const eventTimezoneSchema = z.enum(EVENT_TIMEZONES)
+export const sectionIdSchema = z.enum(SECTION_IDS)

@@ -29,6 +29,8 @@ applied with Wrangler.
   cascade from `users`.
 - **Indexes**: declared explicitly in each table's extras callback and named
   `<table>_<column>_idx` (or `_unique` for composite unique indexes).
+- **Aggregate schema**: `schema` exports all tables as one const object, used to
+  type a client as `DrizzleD1Database<typeof schema>`.
 
 ## Generating migrations
 

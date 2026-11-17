@@ -355,3 +355,21 @@ export const collaborators = sqliteTable(
   },
   (table) => [index('collaborators_invitation_id_idx').on(table.invitationId)],
 )
+
+/**
+ * All tables as one const object. Adapters use it to type a Drizzle client as
+ * `DrizzleD1Database<typeof schema>`.
+ */
+export const schema = {
+  users,
+  sessions,
+  accounts,
+  verifications,
+  catalogTemplates,
+  invitations,
+  guests,
+  rsvps,
+  transactions,
+  promos,
+  collaborators,
+} as const
