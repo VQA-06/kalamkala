@@ -6,11 +6,12 @@ import type {
   StoredInvitation,
 } from '@kalamkala/app-core'
 import {
+  AppearanceConfigSchema,
   MasterInvitationSchema,
   invitationStatusSchema,
   invitationTierSchema,
 } from '@kalamkala/contracts'
-import type { InvitationStatus, MasterInvitation } from '@kalamkala/contracts'
+import type { AppearanceConfig, InvitationStatus, MasterInvitation } from '@kalamkala/contracts'
 import { invitations } from '@kalamkala/db-schema'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -42,6 +43,7 @@ const CachedInvitationSchema = z.object({
   tier: invitationTierSchema,
   status: invitationStatusSchema,
   content: MasterInvitationSchema,
+  appearance: AppearanceConfigSchema.nullable(),
   publishedAt: z.iso.datetime().nullable(),
   expiresAt: z.iso.datetime().nullable(),
 })
@@ -56,6 +58,7 @@ const toCachedInvitation = (invitation: StoredInvitation) => ({
   tier: invitation.tier,
   status: invitation.status,
   content: invitation.content,
+  appearance: invitation.appearance,
   publishedAt: invitation.publishedAt?.toISOString() ?? null,
   expiresAt: invitation.expiresAt?.toISOString() ?? null,
 })
@@ -86,6 +89,28 @@ const parseContentJson = (contentJson: string, invitationId: string): MasterInvi
   if (!parsed.success) {
     throw new Error(
       `Invitation ${invitationId} has invalid content_json: ${parsed.error.message}`,
+    )
+  }
+  return parsed.data
+}
+
+const parseAppearanceJson = (
+  appearanceJson: string | null,
+  invitationId: string,
+): AppearanceConfig | null => {
+  if (appearanceJson === null) return null
+
+  let raw: unknown
+  try {
+    raw = JSON.parse(appearanceJson)
+  } catch (error) {
+    throw new Error(`Invitation ${invitationId} has unreadable appearance_json`, { cause: error })
+  }
+
+  const parsed = AppearanceConfigSchema.safeParse(raw)
+  if (!parsed.success) {
+    throw new Error(
+      `Invitation ${invitationId} has invalid appearance_json: ${parsed.error.message}`,
     )
   }
   return parsed.data
@@ -144,6 +169,7 @@ export class D1KVInvitationRepository implements InvitationRepository {
         tier: input.tier,
         status: input.status,
         contentJson: JSON.stringify(input.content),
+        appearanceJson: input.appearance === null ? null : JSON.stringify(input.appearance),
         publishedAt: input.publishedAt,
         expiresAt: input.expiresAt,
       })
@@ -223,6 +249,7 @@ export class D1KVInvitationRepository implements InvitationRepository {
       tier: row.tier,
       status: row.status,
       content: parseContentJson(row.contentJson, row.id),
+      appearance: parseAppearanceJson(row.appearanceJson, row.id),
       publishedAt: row.publishedAt,
       expiresAt: row.expiresAt,
     }

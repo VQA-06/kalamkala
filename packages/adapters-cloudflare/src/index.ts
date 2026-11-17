@@ -1,5 +1,6 @@
 export * from './console-json-logger.js'
 export * from './d1-guest-repository.js'
+export * from './d1-invitation-report-repository.js'
 export * from './d1-invitation-repository.js'
 export * from './d1-rsvp-repository.js'
 export * from './d1-transaction-repository.js'
