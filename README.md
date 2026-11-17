@@ -56,6 +56,36 @@ them as-is; replace them with the ids printed by `wrangler d1 create
 kalamkala-db` and `wrangler kv namespace create INVITE_KV` before the first
 deploy. Also replace `CDN_BASE_URL` with the R2 public or custom domain.
 
+## Auth & public invitations
+
+Google sign-in runs through Better Auth. Register this redirect URI in the
+Google Cloud console: `${BETTER_AUTH_URL}/api/auth/callback/google`
+(local: `http://localhost:3000/api/auth/callback/google`).
+
+Secrets live in `apps/web/.dev.vars` locally and are set with
+`wrangler secret put <NAME>` in production: `BETTER_AUTH_SECRET`,
+`BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
+`TURNSTILE_SECRET_KEY`. `TURNSTILE_SITE_KEY` and `CDN_BASE_URL` are public and
+may stay in `[vars]`.
+
+`pnpm db:migrate:local` applies the D1 migrations in order: `0000` (schema) and
+`0001` (invitation reports).
+
+Every published invitation is reachable at `/u/<slug>`. Share a named link with
+`?to=Nama%20Tamu`, or a personal code with `?g=<guest qr token>`. Invitations
+with the PIN gate enabled render the PIN screen before the content.
+
+Promote an operator after they sign in once:
+
+```sh
+pnpm --filter @kalamkala/web exec wrangler d1 execute DB --local \
+  --command "UPDATE users SET role='ADMIN' WHERE email='you@example.com'"
+```
+
+Use `--remote` for the deployed database. The invitation body is mounted
+client-side by `TemplateHost`; the title, description, and OG meta are rendered
+on the server so link previews work.
+
 ## Scripts
 
 | Command | Effect |
