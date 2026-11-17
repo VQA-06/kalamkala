@@ -254,6 +254,15 @@ const pinEnabled = (content: MasterInvitation): boolean =>
   content.accessControl.pinCode !== null &&
   content.accessControl.pinCode.length > 0
 
+/**
+ * Public payloads must never carry the private PIN. The flag stays true so the
+ * theme still shows its private label, while pinCode is always null.
+ */
+const toPublicContent = (content: MasterInvitation): MasterInvitation => ({
+  ...content,
+  accessControl: { ...content.accessControl, pinCode: null },
+})
+
 const resolveGuest = async (
   services: Services,
   invitation: StoredInvitation,
@@ -512,7 +521,7 @@ export const getPublicInvitation = createServerFn({ method: 'GET' })
         seo: buildSeo(invitation.content, browser.cdnBaseUrl),
         theme: buildTheme(entry, invitation),
         invitation: {
-          content: invitation.content,
+          content: toPublicContent(invitation.content),
           guest,
           pinEnabled: pinEnabled(invitation.content),
         },
