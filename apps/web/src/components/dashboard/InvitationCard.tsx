@@ -1,3 +1,4 @@
+import { ChatBubbleIcon, ExternalLinkIcon, Pencil1Icon, PersonIcon } from '@radix-ui/react-icons'
 import { templateRegistry } from '@kalamkala/templates/registry'
 import { Link } from '@tanstack/react-router'
 
@@ -11,7 +12,7 @@ import type { OwnedInvitationSummary } from '../../server/dashboard/invitations'
 import { StatusBadge } from './ui'
 
 const ACTION_CLASS =
-  'border border-line px-3 py-1.5 text-xs font-semibold text-ink hover:border-champagne'
+  'inline-flex items-center gap-1.5 border border-line px-3 py-1.5 text-xs font-semibold text-ink hover:border-champagne'
 
 export function InvitationCard({ invitation }: { invitation: OwnedInvitationSummary }) {
   const template = templateRegistry.find(
@@ -58,6 +59,7 @@ export function InvitationCard({ invitation }: { invitation: OwnedInvitationSumm
           params={{ id: invitation.id }}
           className={ACTION_CLASS}
         >
+          <Pencil1Icon aria-hidden="true" />
           Editor
         </Link>
         <Link
@@ -65,6 +67,7 @@ export function InvitationCard({ invitation }: { invitation: OwnedInvitationSumm
           params={{ id: invitation.id }}
           className={ACTION_CLASS}
         >
+          <PersonIcon aria-hidden="true" />
           Tamu
         </Link>
         <Link
@@ -72,6 +75,7 @@ export function InvitationCard({ invitation }: { invitation: OwnedInvitationSumm
           params={{ id: invitation.id }}
           className={ACTION_CLASS}
         >
+          <ChatBubbleIcon aria-hidden="true" />
           RSVP
         </Link>
         <Link
@@ -90,6 +94,7 @@ export function InvitationCard({ invitation }: { invitation: OwnedInvitationSumm
             rel="noreferrer"
             className={ACTION_CLASS}
           >
+            <ExternalLinkIcon aria-hidden="true" />
             Lihat publik
           </Link>
         ) : null}

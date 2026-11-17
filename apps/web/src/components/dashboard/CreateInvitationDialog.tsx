@@ -1,4 +1,5 @@
 import { Dialog } from '@base-ui/react/dialog'
+import { PlusIcon } from '@radix-ui/react-icons'
 import { Field } from '@base-ui/react/field'
 import { templateRegistry } from '@kalamkala/templates/registry'
 import { EVENT_CATEGORIES, INVITATION_TIERS } from '@kalamkala/contracts'
@@ -57,6 +58,7 @@ export function CreateInvitationDialog() {
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger render={<DashboardButton variant="primary" />}>
+        <PlusIcon aria-hidden="true" />
         Buat undangan
       </Dialog.Trigger>
       <Dialog.Portal>
