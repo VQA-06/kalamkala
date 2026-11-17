@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-labelledby="media-title media-desc">
+  <title id="media-title">Pratinjau media</title>
+  <desc id="media-desc">Placeholder netral untuk foto atau video pada pratinjau tema.</desc>
+  <rect width="800" height="600" fill="#FAF6EE"/>
+  <rect x="24.5" y="24.5" width="751" height="551" fill="none" stroke="#7C5A26" stroke-width="1"/>
+  <rect x="34.5" y="34.5" width="731" height="531" fill="none" stroke="#7C5A26" stroke-width="1"/>
+  <g stroke="#7C5A26" stroke-width="1">
+    <line x1="400" y1="245" x2="400" y2="255"/>
+    <line x1="360" y1="250" x2="440" y2="250"/>
+    <line x1="400" y1="345" x2="400" y2="355"/>
+    <line x1="360" y1="350" x2="440" y2="350"/>
+  </g>
+  <text x="400" y="310" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="34" fill="#2B241C">Pratinjau media</text>
+  <text x="400" y="392" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" letter-spacing="3" fill="#7C5A26">GAMBAR CONTOH</text>
+</svg>
