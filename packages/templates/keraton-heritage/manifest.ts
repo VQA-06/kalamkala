@@ -54,4 +54,8 @@ export const manifest: TemplateManifest = {
       },
     },
   ],
+  fonts: [
+    { family: 'Cormorant Garamond', weights: [400, 500, 600], styles: ['normal', 'italic'] },
+    { family: 'Plus Jakarta Sans', weights: [300, 400, 500] },
+  ],
 }

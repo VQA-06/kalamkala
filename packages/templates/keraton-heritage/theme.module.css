@@ -5,9 +5,13 @@
 .root {
   box-sizing: border-box;
   max-width: 100%;
+  --tpl-font-display: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype',
+    Palatino, 'Book Antiqua', Georgia, serif;
+  --tpl-font-ui: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', sans-serif;
   background: var(--tpl-bg-primary, #faf6ee);
   color: var(--tpl-text-primary, #2b241c);
-  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  font-family: var(--tpl-font-display);
   font-size: 1rem;
   line-height: 1.7;
   -webkit-text-size-adjust: 100%;
@@ -36,6 +40,45 @@
 .root textarea {
   font: inherit;
   color: inherit;
+}
+
+/* Small labels, meta, and controls use the UI sans; display text keeps the
+   Cormorant serif from the root. */
+.root button,
+.root input,
+.root select,
+.root textarea,
+.gateDate,
+.gateGuest,
+.gateHint,
+.gateError,
+.pinLabel,
+.heroDate,
+.heroVenue,
+.privateLabel,
+.qrNote,
+.qrTitle,
+.sectionTitle,
+.subheading,
+.quoteSource,
+.hostMeta,
+.eventMeta,
+.eventDress,
+.link,
+.timelineDate,
+.galleryCaption,
+.giftAccount,
+.giftHolder,
+.copyButton,
+.statLabel,
+.labelText,
+.helper,
+.formStatus,
+.emptyNote,
+.kitLabel,
+.kitValue,
+.previewBadge {
+  font-family: var(--tpl-font-ui);
 }
 
 .root :focus-visible {

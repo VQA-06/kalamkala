@@ -32,6 +32,13 @@ export type TemplatePalette = {
   tokens: ThemeTokens
 }
 
+/** A webfont a theme expects the host to load. */
+export type TemplateFont = {
+  family: string
+  weights?: readonly number[]
+  styles?: readonly ('normal' | 'italic')[]
+}
+
 export type TemplateManifest = {
   id: string
   name: string
@@ -42,6 +49,8 @@ export type TemplateManifest = {
   occasions: readonly TemplateOccasion[]
   /** Production themes ship at least three palettes. */
   palettes: readonly TemplatePalette[]
+  /** Fonts the host should load before mounting the theme. */
+  fonts?: readonly TemplateFont[]
 }
 
 export type GuestContext = {
