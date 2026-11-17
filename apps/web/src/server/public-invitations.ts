@@ -19,7 +19,13 @@ import {
   RsvpValidationError,
   systemClock,
 } from '@kalamkala/app-core'
-import type { LoggerPort, StoredGuest, StoredInvitation, StoredRsvp } from '@kalamkala/app-core'
+import type {
+  CachePort,
+  LoggerPort,
+  StoredGuest,
+  StoredInvitation,
+  StoredRsvp,
+} from '@kalamkala/app-core'
 import {
   SECTION_IDS,
   invitationReportReasonSchema,
@@ -45,6 +51,10 @@ import type {
 const PUBLIC_WISH_PAGE_SIZE = 10
 const PIN_GRANT_COOKIE = 'kalamkala_pin_grant'
 const PIN_GRANT_TTL_SECONDS = 2 * 60 * 60
+const PIN_ATTEMPT_LIMIT = 5
+const PIN_ATTEMPT_TTL_SECONDS = 600
+const PRIVATE_INVITATION_ERROR = 'Undangan ini memerlukan PIN.'
+const PIN_THROTTLED_ERROR = 'Terlalu banyak percobaan PIN. Coba lagi nanti.'
 const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
 
 /** Used only when the registry has no template at all; production never hits it. */
@@ -60,6 +70,7 @@ const FALLBACK_THEME_TOKENS: ThemeTokens = {
 
 type Services = {
   logger: LoggerPort
+  cache: CachePort
   invitations: D1KVInvitationRepository
   guests: D1GuestRepository
   rsvps: D1RsvpRepository
@@ -91,6 +102,7 @@ const createServices = (requestId: string): Services => {
 
   return {
     logger,
+    cache,
     invitations: new D1KVInvitationRepository({ db, cache, logger }),
     guests: new D1GuestRepository({ db, logger }),
     rsvps,
@@ -348,9 +360,10 @@ const turnstileResponseSchema = z.object({ success: z.boolean() })
 
 const clientIp = (): string | null => {
   try {
+    const cfIp = getRequest().headers.get('cf-connecting-ip')
+    if (cfIp !== null && cfIp.length > 0) return cfIp
     const forwarded = getRequestIP({ xForwardedFor: true })
-    if (forwarded !== undefined && forwarded.length > 0) return forwarded
-    return getRequest().headers.get('cf-connecting-ip')
+    return forwarded !== undefined && forwarded.length > 0 ? forwarded : null
   } catch {
     return null
   }
@@ -373,14 +386,50 @@ const verifyTurnstile = async (token: string, remoteIp: string | null): Promise<
   }
 }
 
-const hashReporter = async (remoteIp: string | null): Promise<string> => {
+/** First 16 hex of SHA-256(value + secret); never reversible to the address. */
+const hashIdentifier = async (value: string): Promise<string> => {
   const digest = await crypto.subtle.digest(
     'SHA-256',
-    textEncoder.encode(`${remoteIp ?? 'unknown'}:${env.BETTER_AUTH_SECRET}`),
+    textEncoder.encode(`${value}:${env.BETTER_AUTH_SECRET}`),
   )
   return [...new Uint8Array(digest).slice(0, 8)]
     .map((byte) => byte.toString(16).padStart(2, '0'))
     .join('')
+}
+
+const pinAttemptKey = (slug: string, fingerprint: string): string =>
+  `pin-attempts:${slug}:${fingerprint}`
+
+const readPinAttempts = async (services: Services, key: string): Promise<number> => {
+  try {
+    const raw = await services.cache.get(key)
+    if (raw === null) return 0
+    const failures = Number.parseInt(raw, 10)
+    return Number.isFinite(failures) && failures > 0 ? failures : 0
+  } catch (error) {
+    services.logger.warn('public-invitation.pin-throttle-read-failed', { err: error })
+    return 0
+  }
+}
+
+const recordPinFailure = async (
+  services: Services,
+  key: string,
+  failures: number,
+): Promise<void> => {
+  try {
+    await services.cache.put(key, String(failures + 1), PIN_ATTEMPT_TTL_SECONDS)
+  } catch (error) {
+    services.logger.warn('public-invitation.pin-throttle-write-failed', { err: error })
+  }
+}
+
+const clearPinFailures = async (services: Services, key: string): Promise<void> => {
+  try {
+    await services.cache.delete(key)
+  } catch (error) {
+    services.logger.warn('public-invitation.pin-throttle-clear-failed', { err: error })
+  }
 }
 
 /* Validators ------------------------------------------------------------- */
@@ -490,11 +539,22 @@ export const verifyPin = createServerFn({ method: 'POST' })
       if (!pinEnabled(invitation.content) || access.pinCode === null) {
         return { ok: false, error: 'Undangan ini tidak memerlukan PIN.' }
       }
+
+      const fingerprint = await hashIdentifier(clientIp() ?? 'unknown')
+      const attemptKey = pinAttemptKey(invitation.slug, fingerprint)
+      const failures = await readPinAttempts(services, attemptKey)
+      if (failures >= PIN_ATTEMPT_LIMIT) {
+        services.logger.warn('public-invitation.pin-throttled', { slug: invitation.slug })
+        return { ok: false, error: PIN_THROTTLED_ERROR }
+      }
+
       if (!timingSafeEqual(access.pinCode, data.pin)) {
-        services.logger.warn('public-invitation.pin-rejected', { slug: data.slug })
+        await recordPinFailure(services, attemptKey, failures)
+        services.logger.warn('public-invitation.pin-rejected', { slug: invitation.slug })
         return { ok: false, error: 'PIN salah, silakan coba lagi.' }
       }
 
+      await clearPinFailures(services, attemptKey)
       writePinGrant(
         invitation.slug,
         await createPinGrant(invitation.slug, env.BETTER_AUTH_SECRET),
@@ -521,6 +581,11 @@ export const submitRsvp = createServerFn({ method: 'POST' })
 
       const invitation = await services.invitations.findBySlug(data.slug)
       if (invitation === null) return { ok: false, error: 'Undangan tidak ditemukan.' }
+
+      if (pinEnabled(invitation.content)) {
+        const granted = await hasPinGrant(invitation.slug, env.BETTER_AUTH_SECRET)
+        if (!granted) return { ok: false, error: PRIVATE_INVITATION_ERROR }
+      }
 
       const lifecycle = services.lifecycle.resolve(invitation)
       if (invitation.status !== 'ACTIVE' || lifecycle === 'EXPIRED') {
@@ -573,6 +638,10 @@ export const loadMoreWishes = createServerFn({ method: 'GET' })
     try {
       const invitation = await services.invitations.findBySlug(data.slug)
       if (invitation === null) return { items: [], nextCursor: null }
+      if (pinEnabled(invitation.content)) {
+        const granted = await hasPinGrant(invitation.slug, env.BETTER_AUTH_SECRET)
+        if (!granted) return { items: [], nextCursor: null }
+      }
       if (invitation.status !== 'ACTIVE') return { items: [], nextCursor: null }
       if (services.lifecycle.resolve(invitation) === 'EXPIRED') {
         return { items: [], nextCursor: null }
@@ -613,7 +682,7 @@ export const reportInvitation = createServerFn({ method: 'POST' })
         invitationId: invitation.id,
         reason: data.reason,
         note: data.note ?? null,
-        reporterHash: await hashReporter(remoteIp),
+        reporterHash: await hashIdentifier(remoteIp ?? 'unknown'),
       })
 
       services.logger.info('public-invitation.reported', {

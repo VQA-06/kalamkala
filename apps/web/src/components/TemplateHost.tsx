@@ -18,17 +18,34 @@ const GOOGLE_FONTS_BASE = 'https://fonts.googleapis.com/css2'
 const FONT_PRECONNECTS = ['https://fonts.googleapis.com', 'https://fonts.gstatic.com'] as const
 
 const buildFontHref = (fonts: readonly TemplateFont[]): string | null => {
-  const families = new Map<string, readonly number[]>()
+  const families = new Map<
+    string,
+    { weights: Set<number>; styles: Set<'normal' | 'italic'> }
+  >()
   for (const font of fonts) {
     const family = font.family.trim()
-    if (family.length === 0 || families.has(family)) continue
-    families.set(family, font.weights ?? [])
+    if (family.length === 0) continue
+    const axes = families.get(family) ?? {
+      weights: new Set<number>(),
+      styles: new Set<'normal' | 'italic'>(),
+    }
+    for (const weight of font.weights ?? []) axes.weights.add(weight)
+    for (const style of font.styles ?? ['normal']) axes.styles.add(style)
+    families.set(family, axes)
   }
   if (families.size === 0) return null
 
-  const params = [...families.entries()].map(([family, weights]) => {
+  const params = [...families.entries()].map(([family, axes]) => {
     const encoded = encodeURIComponent(family).replace(/%20/gu, '+')
-    return weights.length > 0 ? `family=${encoded}:wght@${weights.join(';')}` : `family=${encoded}`
+    const weights = axes.weights.size > 0 ? [...axes.weights] : [400]
+
+    if (axes.styles.has('italic')) {
+      const tuples = weights.flatMap((weight) => [`0,${weight}`, `1,${weight}`])
+      return `family=${encoded}:ital,wght@${tuples.join(';')}`
+    }
+    return axes.weights.size > 0
+      ? `family=${encoded}:wght@${weights.join(';')}`
+      : `family=${encoded}`
   })
   return `${GOOGLE_FONTS_BASE}?${params.join('&')}&display=swap`
 }
