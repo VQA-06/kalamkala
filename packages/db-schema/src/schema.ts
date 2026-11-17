@@ -28,6 +28,7 @@ import {
 import {
   DISCOUNT_TYPES,
   GUEST_CATEGORIES,
+  INVITATION_REPORT_REASONS,
   INVITATION_STATUSES,
   INVITATION_TIERS,
   PAYMENT_PROVIDERS,
@@ -184,6 +185,7 @@ export const invitations = sqliteTable(
       .notNull()
       .default('DRAFT'),
     contentJson: text('content_json').notNull().default('{}'),
+    appearanceJson: text('appearance_json'),
     publishedAt: integer('published_at', { mode: 'timestamp' }),
     expiresAt: integer('expires_at', { mode: 'timestamp' }),
     createdAt: createdAtColumn(),
@@ -199,6 +201,28 @@ export const invitations = sqliteTable(
     check(
       'invitations_status_check',
       sql`${table.status} in (${sql.raw(sqlLiteralList(INVITATION_STATUSES))})`,
+    ),
+  ],
+)
+
+/** Abuse reports for admin triage. Reporter identity is a hash, never an IP. */
+export const invitationReports = sqliteTable(
+  'invitation_reports',
+  {
+    id: text('id').primaryKey(),
+    invitationId: text('invitation_id')
+      .notNull()
+      .references(() => invitations.id, { onDelete: 'cascade' }),
+    reason: text('reason', { enum: INVITATION_REPORT_REASONS }).notNull(),
+    note: text('note'),
+    reporterHash: text('reporter_hash'),
+    createdAt: createdAtColumn(),
+  },
+  (table) => [
+    index('invitation_reports_invitation_id_idx').on(table.invitationId),
+    check(
+      'invitation_reports_reason_check',
+      sql`${table.reason} in (${sql.raw(sqlLiteralList(INVITATION_REPORT_REASONS))})`,
     ),
   ],
 )
@@ -367,6 +391,7 @@ export const schema = {
   verifications,
   catalogTemplates,
   invitations,
+  invitationReports,
   guests,
   rsvps,
   transactions,

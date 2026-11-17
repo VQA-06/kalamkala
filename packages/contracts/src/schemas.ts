@@ -13,6 +13,7 @@ import {
   EVENT_CATEGORIES,
   EVENT_TIMEZONES,
   GUEST_CATEGORIES,
+  INVITATION_REPORT_REASONS,
   INVITATION_STATUSES,
   INVITATION_TIERS,
   LOCALES,
@@ -40,3 +41,4 @@ export const localeSchema = z.enum(LOCALES)
 export const mediaOrientationSchema = z.enum(MEDIA_ORIENTATIONS)
 export const eventTimezoneSchema = z.enum(EVENT_TIMEZONES)
 export const sectionIdSchema = z.enum(SECTION_IDS)
+export const invitationReportReasonSchema = z.enum(INVITATION_REPORT_REASONS)

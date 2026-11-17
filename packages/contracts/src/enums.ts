@@ -71,3 +71,11 @@ export const SECTION_IDS = [
   'closing',
 ] as const
 export type SectionId = (typeof SECTION_IDS)[number]
+
+export const INVITATION_REPORT_REASONS = [
+  'SPAM',
+  'INAPPROPRIATE',
+  'FRAUD',
+  'OTHER',
+] as const
+export type InvitationReportReason = (typeof INVITATION_REPORT_REASONS)[number]

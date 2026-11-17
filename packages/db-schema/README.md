@@ -16,6 +16,11 @@ applied with Wrangler.
 - **JSON**: `*_json` columns are plain `text` with SQL string defaults (`'{}'` or
   `'[]'`). They are parsed and validated at API boundaries, never by Drizzle's
   `{ mode: 'json' }`.
+- **Appearance**: `invitations.appearance_json` is nullable and has no default.
+  `null` means the host has not overridden the template palette, so renderers
+  fall back to the template's first palette.
+- **Reports**: `invitation_reports` stores abuse reports for admin triage. Only a
+  `reporter_hash` is persisted; raw IP addresses are never stored.
 - **Booleans**: `integer` columns with `{ mode: 'boolean' }` and an explicit
   default.
 - **Enums**: every enum column is `text(col, { enum: CONST })` and also has a
