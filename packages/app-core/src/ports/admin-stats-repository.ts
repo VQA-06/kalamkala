@@ -5,6 +5,9 @@ export type PlatformStats = {
   userCount: number
   invitationCount: number
   transactionCount: number
+  /** Sum of PAID transaction amounts, in whole rupiah. */
+  revenueTotal: number
+  paidTransactionCount: number
   latestTransactions: readonly StoredTransaction[]
 }
 

@@ -78,8 +78,9 @@ const createTransactionRepository = (): {
     findByMerchantOrderId: async () => null,
     create: async (input) => {
       created.push(input)
-      return { ...input, paidAt: null }
+      return { ...input, paidAt: null, createdAt: FIXED_NOW }
     },
+    listRecent: async () => [],
     markPaidIfPending: async () => null,
     markStatus: async () => {},
   }

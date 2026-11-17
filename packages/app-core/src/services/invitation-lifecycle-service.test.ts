@@ -30,6 +30,7 @@ const createInvitation = (
   status: overrides.status ?? 'ACTIVE',
   content: { events: overrides.events ?? [] } as unknown as MasterInvitation,
   appearance: null,
+  whatsappTemplate: null,
   publishedAt: null,
   expiresAt: overrides.expiresAt ?? null,
 })

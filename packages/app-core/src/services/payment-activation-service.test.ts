@@ -34,6 +34,7 @@ const createInvitation = (overrides: Partial<StoredInvitation> = {}): StoredInvi
   status: 'DRAFT',
   content: {} as unknown as MasterInvitation,
   appearance: null,
+  whatsappTemplate: null,
   publishedAt: null,
   expiresAt: null,
   ...overrides,
@@ -50,6 +51,7 @@ const createTransaction = (overrides: Partial<StoredTransaction> = {}): StoredTr
   amount: 90_000,
   status: 'PENDING',
   paidAt: null,
+  createdAt: FIXED_NOW,
   ...overrides,
 })
 
@@ -86,6 +88,9 @@ const createInvitationRepository = (initial: StoredInvitation): FakeInvitationRe
       throw new Error('activation tests never create invitations')
     },
     updateContent: async () => {},
+    updateAppearance: async () => {},
+    setWhatsappTemplate: async () => {},
+    updateTier: async () => {},
     setStatus: async (id, status, publishedAt) => {
       setStatusCalls.push({ id, status, publishedAt })
       const current = store.get(id)
@@ -125,6 +130,7 @@ const createTransactionRepository = (
     create: async () => {
       throw new Error('activation tests never create transactions')
     },
+    listRecent: async () => [],
     markPaidIfPending: async (merchantOrderId, confirmation) => {
       markPaidCalls.push(confirmation)
       const current = findByMerchantOrderId(merchantOrderId)
