@@ -42,6 +42,7 @@ const CachedInvitationSchema = z.object({
   templateId: z.string().min(1),
   tier: invitationTierSchema,
   status: invitationStatusSchema,
+  createdAt: z.iso.datetime(),
   content: MasterInvitationSchema,
   appearance: AppearanceConfigSchema.nullable(),
   whatsappTemplate: z.string().nullable(),
@@ -58,6 +59,7 @@ const toCachedInvitation = (invitation: StoredInvitation) => ({
   templateId: invitation.templateId,
   tier: invitation.tier,
   status: invitation.status,
+  createdAt: invitation.createdAt.toISOString(),
   content: invitation.content,
   appearance: invitation.appearance,
   whatsappTemplate: invitation.whatsappTemplate,
@@ -71,9 +73,10 @@ const readCachedInvitation = (raw: unknown): StoredInvitation => {
     throw new Error(`cached invitation is invalid: ${parsed.error.message}`)
   }
 
-  const { publishedAt, expiresAt, ...rest } = parsed.data
+  const { createdAt, publishedAt, expiresAt, ...rest } = parsed.data
   return {
     ...rest,
+    createdAt: new Date(createdAt),
     publishedAt: publishedAt === null ? null : new Date(publishedAt),
     expiresAt: expiresAt === null ? null : new Date(expiresAt),
   }
@@ -306,6 +309,7 @@ export class D1KVInvitationRepository implements InvitationRepository {
       templateId: row.templateId,
       tier: row.tier,
       status: row.status,
+      createdAt: row.createdAt,
       content: parseContentJson(row.contentJson, row.id),
       appearance: parseAppearanceJson(row.appearanceJson, row.id),
       whatsappTemplate: row.whatsappTemplate,

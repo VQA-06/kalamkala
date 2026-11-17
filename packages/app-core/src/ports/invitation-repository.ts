@@ -17,6 +17,7 @@ export type StoredInvitation = {
   templateId: string
   tier: InvitationTier
   status: InvitationStatus
+  createdAt: Date
   content: MasterInvitation
   /** Theme overrides; null means the template's default appearance applies. */
   appearance: AppearanceConfig | null

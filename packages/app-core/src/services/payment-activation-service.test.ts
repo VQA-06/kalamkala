@@ -32,6 +32,7 @@ const createInvitation = (overrides: Partial<StoredInvitation> = {}): StoredInvi
   templateId: 'senja-ungu',
   tier: 'BASIC',
   status: 'DRAFT',
+  createdAt: FIXED_NOW,
   content: {} as unknown as MasterInvitation,
   appearance: null,
   whatsappTemplate: null,

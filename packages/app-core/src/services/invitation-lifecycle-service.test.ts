@@ -28,6 +28,7 @@ const createInvitation = (
   templateId: 'senja-ungu',
   tier: 'BASIC',
   status: overrides.status ?? 'ACTIVE',
+  createdAt: new Date(EVENT_START),
   content: { events: overrides.events ?? [] } as unknown as MasterInvitation,
   appearance: null,
   whatsappTemplate: null,
