@@ -6,7 +6,7 @@ import type {
   TransactionRepository,
 } from '@kalamkala/app-core'
 import { transactions } from '@kalamkala/db-schema'
-import { and, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 
 import type { AppDatabase } from './database.js'
 
@@ -62,6 +62,16 @@ export class D1TransactionRepository implements TransactionRepository {
     return this.toStoredTransaction(row)
   }
 
+  async listRecent(limit: number): Promise<StoredTransaction[]> {
+    const take = Number.isFinite(limit) ? Math.min(200, Math.max(1, Math.trunc(limit))) : 20
+    const rows = await this.db
+      .select()
+      .from(transactions)
+      .orderBy(desc(transactions.createdAt), desc(transactions.id))
+      .limit(take)
+    return rows.map((row) => this.toStoredTransaction(row))
+  }
+
   async markPaidIfPending(
     merchantOrderId: string,
     confirmation: PaymentConfirmation,
@@ -115,6 +125,7 @@ export class D1TransactionRepository implements TransactionRepository {
       amount: row.amount,
       status: row.status,
       paidAt: row.paidAt,
+      createdAt: row.createdAt,
     }
   }
 }

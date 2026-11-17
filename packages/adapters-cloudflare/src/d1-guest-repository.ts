@@ -3,6 +3,7 @@ import type {
   GuestRepository,
   LoggerPort,
   StoredGuest,
+  UpdateGuestInput,
 } from '@kalamkala/app-core'
 import { guests } from '@kalamkala/db-schema'
 import { eq } from 'drizzle-orm'
@@ -65,6 +66,25 @@ export class D1GuestRepository implements GuestRepository {
     const row = rows[0]
     if (row === undefined) {
       throw new Error(`Failed to create guest for invitation ${input.invitationId}`)
+    }
+    return this.toStoredGuest(row)
+  }
+
+  async update(id: string, input: UpdateGuestInput): Promise<StoredGuest> {
+    const patch: Partial<typeof guests.$inferInsert> = { updatedAt: new Date() }
+    if (input.name !== undefined) patch.name = input.name
+    if (input.phoneNormalized !== undefined) patch.phoneNormalized = input.phoneNormalized
+    if (input.category !== undefined) patch.category = input.category
+    if (input.maxPax !== undefined) patch.maxPax = input.maxPax
+    if (input.tableNumber !== undefined) patch.tableNumber = input.tableNumber
+    if (input.sessionLabel !== undefined) patch.sessionLabel = input.sessionLabel
+
+    const rows = await this.db.update(guests).set(patch).where(eq(guests.id, id)).returning()
+
+    const row = rows[0]
+    if (row === undefined) {
+      this.logger?.error('Guest not found while updating', { guestId: id })
+      throw new Error(`Guest ${id} not found`)
     }
     return this.toStoredGuest(row)
   }

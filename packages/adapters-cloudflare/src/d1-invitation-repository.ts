@@ -44,6 +44,7 @@ const CachedInvitationSchema = z.object({
   status: invitationStatusSchema,
   content: MasterInvitationSchema,
   appearance: AppearanceConfigSchema.nullable(),
+  whatsappTemplate: z.string().nullable(),
   publishedAt: z.iso.datetime().nullable(),
   expiresAt: z.iso.datetime().nullable(),
 })
@@ -59,6 +60,7 @@ const toCachedInvitation = (invitation: StoredInvitation) => ({
   status: invitation.status,
   content: invitation.content,
   appearance: invitation.appearance,
+  whatsappTemplate: invitation.whatsappTemplate,
   publishedAt: invitation.publishedAt?.toISOString() ?? null,
   expiresAt: invitation.expiresAt?.toISOString() ?? null,
 })
@@ -180,6 +182,7 @@ export class D1KVInvitationRepository implements InvitationRepository {
         status: input.status,
         contentJson: JSON.stringify(input.content),
         appearanceJson: input.appearance === null ? null : JSON.stringify(input.appearance),
+        whatsappTemplate: input.whatsappTemplate,
         publishedAt: input.publishedAt,
         expiresAt: input.expiresAt,
       })
@@ -198,6 +201,51 @@ export class D1KVInvitationRepository implements InvitationRepository {
       .set({ contentJson: JSON.stringify(content), updatedAt: new Date() })
       .where(eq(invitations.id, id))
       .returning()
+
+    const row = rows[0]
+    if (row === undefined) {
+      throw new Error(`Invitation ${id} not found`)
+    }
+    await this.cache.delete(cacheKeyForSlug(row.slug))
+  }
+
+  async updateAppearance(id: string, appearance: AppearanceConfig | null): Promise<void> {
+    const rows = await this.db
+      .update(invitations)
+      .set({
+        appearanceJson: appearance === null ? null : JSON.stringify(appearance),
+        updatedAt: new Date(),
+      })
+      .where(eq(invitations.id, id))
+      .returning({ slug: invitations.slug })
+
+    const row = rows[0]
+    if (row === undefined) {
+      throw new Error(`Invitation ${id} not found`)
+    }
+    await this.cache.delete(cacheKeyForSlug(row.slug))
+  }
+
+  async setWhatsappTemplate(id: string, template: string | null): Promise<void> {
+    const rows = await this.db
+      .update(invitations)
+      .set({ whatsappTemplate: template, updatedAt: new Date() })
+      .where(eq(invitations.id, id))
+      .returning({ slug: invitations.slug })
+
+    const row = rows[0]
+    if (row === undefined) {
+      throw new Error(`Invitation ${id} not found`)
+    }
+    await this.cache.delete(cacheKeyForSlug(row.slug))
+  }
+
+  async updateTier(id: string, tier: StoredInvitation['tier']): Promise<void> {
+    const rows = await this.db
+      .update(invitations)
+      .set({ tier, updatedAt: new Date() })
+      .where(eq(invitations.id, id))
+      .returning({ slug: invitations.slug })
 
     const row = rows[0]
     if (row === undefined) {
@@ -260,6 +308,7 @@ export class D1KVInvitationRepository implements InvitationRepository {
       status: row.status,
       content: parseContentJson(row.contentJson, row.id),
       appearance: parseAppearanceJson(row.appearanceJson, row.id),
+      whatsappTemplate: row.whatsappTemplate,
       publishedAt: row.publishedAt,
       expiresAt: row.expiresAt,
     }

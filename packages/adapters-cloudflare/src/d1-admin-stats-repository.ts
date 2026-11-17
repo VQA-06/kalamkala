@@ -4,7 +4,7 @@ import type {
   StoredTransaction,
 } from '@kalamkala/app-core'
 import { invitations, transactions, users } from '@kalamkala/db-schema'
-import { count, desc } from 'drizzle-orm'
+import { count, desc, eq, sql } from 'drizzle-orm'
 
 import type { AppDatabase } from './database.js'
 
@@ -33,10 +33,17 @@ export class D1AdminStatsRepository implements AdminStatsRepository {
   async getPlatformStats(latestLimit?: number): Promise<PlatformStats> {
     const limit = toLatestLimit(latestLimit)
 
-    const [userRows, invitationRows, transactionRows, latestRows] = await Promise.all([
+    const [userRows, invitationRows, transactionRows, paidRows, latestRows] = await Promise.all([
       this.db.select({ value: count() }).from(users),
       this.db.select({ value: count() }).from(invitations),
       this.db.select({ value: count() }).from(transactions),
+      this.db
+        .select({
+          revenue: sql<number>`coalesce(sum(${transactions.amount}), 0)`,
+          paid: count(),
+        })
+        .from(transactions)
+        .where(eq(transactions.status, 'PAID')),
       this.db
         .select()
         .from(transactions)
@@ -44,10 +51,13 @@ export class D1AdminStatsRepository implements AdminStatsRepository {
         .limit(limit),
     ])
 
+    const paid = paidRows[0]
     return {
       userCount: userRows[0]?.value ?? 0,
       invitationCount: invitationRows[0]?.value ?? 0,
       transactionCount: transactionRows[0]?.value ?? 0,
+      revenueTotal: paid?.revenue ?? 0,
+      paidTransactionCount: paid?.paid ?? 0,
       latestTransactions: latestRows.map((row) => this.toStoredTransaction(row)),
     }
   }
@@ -64,6 +74,7 @@ export class D1AdminStatsRepository implements AdminStatsRepository {
       amount: row.amount,
       status: row.status,
       paidAt: row.paidAt,
+      createdAt: row.createdAt,
     }
   }
 }
