@@ -31,7 +31,7 @@ const buildStatements = (): string[] =>
     .sort((left, right) => left.manifest.sortOrder - right.manifest.sortOrder)
     .map(
       ({ manifest }) =>
-        `INSERT INTO catalog_templates (id, name, tier, is_visible, sort_order) VALUES (${sqlString(manifest.id)}, ${sqlString(manifest.name)}, ${sqlString(manifest.tier)}, ${manifest.isVisible ? 1 : 0}, ${manifest.sortOrder}) ON CONFLICT(id) DO UPDATE SET name = excluded.name, tier = excluded.tier, is_visible = excluded.is_visible, sort_order = excluded.sort_order;`,
+        `INSERT INTO catalog_templates (id, name, tier, is_visible, sort_order) VALUES (${sqlString(manifest.id)}, ${sqlString(manifest.name)}, ${sqlString(manifest.tier)}, ${manifest.isVisible ? 1 : 0}, ${manifest.sortOrder}) ON CONFLICT(id) DO NOTHING;`,
     )
 
 const main = (): void => {

@@ -99,9 +99,11 @@ pnpm sync:templates --local     # default: local D1
 pnpm sync:templates --remote    # deployed D1
 ```
 
-`registry.ts` is the source of truth. The script emits an idempotent upsert per
-entry into `catalog_templates` (id, name, tier, is_visible, sort_order) and runs
-it through `wrangler d1 execute` from `apps/web`.
+`registry.ts` seeds the catalog. The script emits an idempotent insert per entry
+into `catalog_templates` (id, name, tier, is_visible, sort_order) and runs it
+through `wrangler d1 execute` from `apps/web`. Existing rows are never
+overwritten (`ON CONFLICT DO NOTHING`): once a template exists, the admin page is
+authoritative for its name, tier, visibility, and order.
 
 ## Starters
 
