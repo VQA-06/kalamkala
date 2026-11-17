@@ -63,9 +63,11 @@ deploy. Also replace `CDN_BASE_URL` with the R2 public or custom domain.
 | `pnpm dev` | Turbo runs the Vite dev server for `apps/web` on port 3000 |
 | `pnpm build` | Turbo builds the Worker bundle and client assets |
 | `pnpm typecheck` | Typechecks every package; `apps/web` regenerates `routeTree.gen.ts` and `worker-configuration.d.ts` first |
-| `pnpm test` | Runs Vitest in `packages/adapters-cloudflare` |
+| `pnpm test` | Runs Vitest in contracts, app-core, adapters-cloudflare, and templates |
 | `pnpm db:generate` | `drizzle-kit generate` into `packages/db-schema/drizzle` |
 | `pnpm db:migrate:local` | Applies D1 migrations to the local Wrangler database |
+| `pnpm new:template` | Scaffolds a template from `_starters` into `packages/templates/<id>` |
+| `pnpm sync:templates` | Upserts the registry into `catalog_templates` (`--dry-run`, `--local`, `--remote`) |
 | `pnpm --filter @kalamkala/web deploy` | Builds and runs `wrangler deploy` |
 | `pnpm --filter @kalamkala/web cf:types` | Regenerates `worker-configuration.d.ts` |
 
@@ -92,7 +94,8 @@ packages/contracts             Zod schemas and shared types
 packages/db-schema             Drizzle schema and D1 migrations
 packages/app-core              Business logic and port definitions (no Cloudflare imports)
 packages/adapters-cloudflare   Port implementations backed by D1, KV, and R2
-packages/templates             Invitation templates
+packages/templates             Template SDK contract, registry with dynamic theme imports,
+                               React/vanilla starters, authoring CLI, Keraton Heritage theme
 ```
 
 Hexagonal rule: `packages/app-core` holds the business logic and declares the
