@@ -13,7 +13,9 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "db:generate": "turbo run db:generate",
-    "db:migrate:local": "pnpm --filter @kalamkala/web db:migrate:local"
+    "db:migrate:local": "pnpm --filter @kalamkala/web db:migrate:local",
+    "new:template": "pnpm --filter @kalamkala/templates new:template",
+    "sync:templates": "pnpm --filter @kalamkala/templates sync:templates"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

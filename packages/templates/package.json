@@ -4,12 +4,27 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./registry.ts",
+    "./sdk": "./sdk/index.ts",
+    "./registry": "./registry.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "new:template": "tsx scripts/create-template.ts",
+    "sync:templates": "tsx scripts/sync-templates.ts"
   },
   "dependencies": {
-    "@kalamkala/contracts": "workspace:*"
+    "@kalamkala/contracts": "workspace:*",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "happy-dom": "^21.0.4",
+    "tsx": "^4.23.15",
+    "vitest": "^5.1.0"
   }
 }
