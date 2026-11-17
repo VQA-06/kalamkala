@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { loadTemplate } from '@kalamkala/templates/registry'
+import type { AppearanceConfig, MasterInvitation } from '@kalamkala/contracts'
+import { loadTemplate, templateRegistry } from '@kalamkala/templates/registry'
 import { createTemplateContext } from '@kalamkala/templates/sdk'
 import type {
+  GuestContext,
   PublicWish,
   RsvpSubmitResult,
   SubmitRsvpInput,
@@ -12,21 +14,69 @@ import type { PublicInvitationPayload, PublicWishPage } from '../lib/public-invi
 import { resolveMediaUrl } from '../lib/media-url'
 import { injectFonts } from '../lib/theme-fonts'
 import { loadMoreWishes, submitRsvp } from '../server/public-invitations'
+import { ThemePreview } from './theme-preview'
 import { TurnstileWidget } from './TurnstileWidget'
 
 const prefersReducedMotion = (): boolean =>
   typeof window.matchMedia === 'function' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-export type TemplateHostProps = {
-  payload: PublicInvitationPayload
+export type EditorPreview = {
+  templateId: string
+  content: MasterInvitation
+  appearance: AppearanceConfig
+  guest?: GuestContext | null
+}
+
+export type TemplateHostProps =
+  | { payload: PublicInvitationPayload; editorPreview?: never }
+  | { editorPreview: EditorPreview; payload?: never }
+
+/**
+ * Public invitation host (Turnstile + server functions) or an editor-only
+ * mount that reuses the theme preview engine with no server wiring.
+ */
+export function TemplateHost(props: TemplateHostProps) {
+  const editorPreview = 'editorPreview' in props ? props.editorPreview : undefined
+  if (editorPreview !== undefined) {
+    return <EditorTemplatePreview preview={editorPreview} />
+  }
+
+  const payload = 'payload' in props ? props.payload : undefined
+  if (payload === undefined) return null
+  return <PublicTemplateHost payload={payload} />
+}
+
+function EditorTemplatePreview({ preview }: { preview: EditorPreview }) {
+  const entry = templateRegistry.find((candidate) => candidate.manifest.id === preview.templateId)
+
+  if (entry === undefined) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center border border-line bg-paper px-6">
+        <p className="max-w-sm text-center text-sm leading-6 text-ink/70" role="status">
+          Tema pratinjau tidak ditemukan.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <ThemePreview
+      templateId={entry.manifest.id}
+      manifest={entry.manifest}
+      preview={preview.content}
+      appearance={preview.appearance}
+      guest={preview.guest ?? null}
+      showPaletteControls={false}
+    />
+  )
 }
 
 /**
  * Mounts one vanilla theme inside a phone-width frame, keeps the font and
  * Turnstile lifecycles, and re-mounts after loading more wishes.
  */
-export function TemplateHost({ payload }: TemplateHostProps) {
+function PublicTemplateHost({ payload }: { payload: PublicInvitationPayload }) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [phase, setPhase] = useState<'loading' | 'ready' | 'error'>('loading')
   const [mountVersion, setMountVersion] = useState(0)

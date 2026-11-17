@@ -4,7 +4,7 @@ import { SECTION_IDS } from '@kalamkala/contracts'
 import type { AppearanceConfig, MasterInvitation } from '@kalamkala/contracts'
 import { loadTemplate } from '@kalamkala/templates/registry'
 import { createTemplateContext } from '@kalamkala/templates/sdk'
-import type { TemplateManifest } from '@kalamkala/templates/sdk'
+import type { GuestContext, TemplateManifest } from '@kalamkala/templates/sdk'
 
 import { injectFonts } from '../../lib/theme-fonts'
 
@@ -19,8 +19,12 @@ export type ThemePreviewProps = {
   templateId: string
   manifest: TemplateManifest
   preview: MasterInvitation
+  /** Editor appearance; when set, palette chips are hidden and tokens come from here. */
+  appearance?: AppearanceConfig
+  /** Optional personalized guest for editor previews; public previews pass null. */
+  guest?: GuestContext | null
   initialPaletteId?: string
-  /** Defaults to true; hosts can hide the chips in dense catalog cards. */
+  /** Defaults to true when no editor appearance is supplied. */
   showPaletteControls?: boolean
   className?: string
   onOpened?: () => void
@@ -39,6 +43,8 @@ export function ThemePreview({
   templateId,
   manifest,
   preview,
+  appearance,
+  guest = null,
   initialPaletteId,
   showPaletteControls = true,
   className,
@@ -63,6 +69,20 @@ export function ThemePreview({
 
   const palette = manifest.palettes.find((candidate) => candidate.id === paletteId)
 
+  const paletteAppearance = useMemo<AppearanceConfig | null>(() => {
+    if (palette === undefined) return null
+    return {
+      themeTokens: palette.tokens,
+      fontPairingId: manifest.id,
+      sectionOrder: [...SECTION_IDS],
+      hiddenSections: [],
+      sectionTitles: {},
+    }
+  }, [manifest.id, palette])
+
+  const effectiveAppearance: AppearanceConfig | null = appearance ?? paletteAppearance
+  const paletteControlsVisible = appearance === undefined && showPaletteControls
+
   useEffect(() => {
     onOpenedRef.current = onOpened
   }, [onOpened])
@@ -76,7 +96,7 @@ export function ThemePreview({
 
   useEffect(() => {
     const container = containerRef.current
-    if (container === null || palette === undefined) return
+    if (container === null || effectiveAppearance === null) return
 
     let disposed = false
     let cleanedUp = false
@@ -95,18 +115,10 @@ export function ThemePreview({
       .then((template) => {
         if (disposed) return
 
-        const appearance: AppearanceConfig = {
-          themeTokens: palette.tokens,
-          fontPairingId: manifest.id,
-          sectionOrder: [...SECTION_IDS],
-          hiddenSections: [],
-          sectionTitles: {},
-        }
-
         const context = createTemplateContext({
           data: content,
-          appearance,
-          guest: null,
+          appearance: effectiveAppearance,
+          guest,
           wishes: [],
           rsvpSummary: null,
           state: {
@@ -161,7 +173,7 @@ export function ThemePreview({
       removeFonts()
       container.replaceChildren()
     }
-  }, [templateId, manifest, content, palette, qrisKey])
+  }, [templateId, manifest, content, effectiveAppearance, guest, qrisKey])
 
   const selectPalette = (nextId: string): void => {
     if (nextId === paletteId) return
@@ -170,11 +182,11 @@ export function ThemePreview({
     setPaletteId(nextId)
   }
 
-  const unavailable = palette === undefined
+  const unavailable = effectiveAppearance === null
 
   return (
     <div className={className}>
-      {showPaletteControls && manifest.palettes.length > 0 ? (
+      {paletteControlsVisible && manifest.palettes.length > 0 ? (
         <div
           className="mb-4 flex flex-wrap items-center justify-center gap-2"
           role="group"
