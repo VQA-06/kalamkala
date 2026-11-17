@@ -59,7 +59,7 @@ const imageOrNull = (
 const field = (labelText: string): HTMLLabelElement => {
   const label = document.createElement('label')
   label.className = cx(styles.field)
-  label.append(el('span', cx(styles.labelText), labelText))
+  label.appendChild(el('span', cx(styles.labelText), labelText))
   return label
 }
 
@@ -82,17 +82,17 @@ type SectionRenderer = (env: RenderEnv, body: HTMLElement) => boolean
 
 const renderOpening: SectionRenderer = ({ ctx }, body) => {
   const { opening } = ctx.data
-  body.append(el('p', cx(styles.openingHeadline), opening.headline))
+  body.appendChild(el('p', cx(styles.openingHeadline), opening.headline))
   if (opening.subheadline !== null && opening.subheadline.length > 0) {
-    body.append(el('p', cx(styles.openingSub), opening.subheadline))
+    body.appendChild(el('p', cx(styles.openingSub), opening.subheadline))
   }
   if (opening.quote !== null && opening.quote.length > 0) {
     const quote = el('blockquote', cx(styles.quote))
-    quote.append(el('p', cx(styles.quoteText), opening.quote))
+    quote.appendChild(el('p', cx(styles.quoteText), opening.quote))
     if (opening.quoteSource !== null && opening.quoteSource.length > 0) {
-      quote.append(el('cite', cx(styles.quoteSource), opening.quoteSource))
+      quote.appendChild(el('cite', cx(styles.quoteSource), opening.quoteSource))
     }
-    body.append(quote)
+    body.appendChild(quote)
   }
   return true
 }
@@ -104,20 +104,20 @@ const renderHosts: SectionRenderer = ({ ctx }, body) => {
     if (host === null || host === undefined) continue
     const card = el('article', cx(styles.hostCard))
     const photo = imageOrNull(ctx, host.photoKey, host.fullName, cx(styles.hostPhoto))
-    if (photo !== null) card.append(photo)
-    card.append(el('h3', cx(styles.hostName), host.fullName))
+    if (photo !== null) card.appendChild(photo)
+    card.appendChild(el('h3', cx(styles.hostName), host.fullName))
     const parents = [host.fatherName, host.motherName].filter(
       (name): name is string => name !== null && name.length > 0,
     )
-    if (parents.length > 0) card.append(el('p', cx(styles.hostParents), parents.join(' & ')))
+    if (parents.length > 0) card.appendChild(el('p', cx(styles.hostParents), parents.join(' & ')))
     if (host.instagramHandle !== null && host.instagramHandle.length > 0) {
       const handle = host.instagramHandle.replace(/^@/u, '')
-      card.append(el('p', cx(styles.hostMeta), `@${handle}`))
+      card.appendChild(el('p', cx(styles.hostMeta), `@${handle}`))
     }
-    list.append(card)
+    list.appendChild(card)
   }
   if (list.childElementCount === 0) return false
-  body.append(list)
+  body.appendChild(list)
   return true
 }
 
@@ -127,23 +127,23 @@ const renderEvents: SectionRenderer = ({ ctx }, body) => {
   const list = el('div', cx(styles.eventList))
   for (const event of events) {
     const card = el('article', cx(styles.eventCard))
-    card.append(el('h3', cx(styles.eventName), event.name))
+    card.appendChild(el('h3', cx(styles.eventName), event.name))
     const start = ctx.utils.formatDate(event.startsAt, event.timezone)
     const end = event.endsAt === null ? null : ctx.utils.formatDate(event.endsAt, event.timezone)
     const when =
       end === null ? `${start} · ${event.timezone}` : `${start} – ${end} · ${event.timezone}`
-    card.append(el('p', cx(styles.eventDate), when))
-    card.append(el('p', cx(styles.eventVenue), event.venueName))
-    card.append(el('p', cx(styles.eventAddress), event.address))
+    card.appendChild(el('p', cx(styles.eventDate), when))
+    card.appendChild(el('p', cx(styles.eventVenue), event.venueName))
+    card.appendChild(el('p', cx(styles.eventAddress), event.address))
     if (event.mapsUrl !== null) {
-      card.append(externalLink(cx(styles.link, styles.eventMeta), event.mapsUrl, ctx.t('viewMap')))
+      card.appendChild(externalLink(cx(styles.link, styles.eventMeta), event.mapsUrl, ctx.t('viewMap')))
     }
     if (event.dressCode !== null && event.dressCode.length > 0) {
-      card.append(el('p', cx(styles.eventDress), `${ctx.t('dressCodeLabel')}: ${event.dressCode}`))
+      card.appendChild(el('p', cx(styles.eventDress), `${ctx.t('dressCodeLabel')}: ${event.dressCode}`))
     }
-    list.append(card)
+    list.appendChild(card)
   }
-  body.append(list)
+  body.appendChild(list)
   return true
 }
 
@@ -155,13 +155,13 @@ const renderLoveStory: SectionRenderer = ({ ctx }, body) => {
   for (const item of loveStory.items) {
     const entry = el('div', cx(styles.timelineItem))
     if (item.date !== null && item.date.length > 0) {
-      entry.append(el('p', cx(styles.timelineDate), ctx.utils.formatDate(item.date, timezone)))
+      entry.appendChild(el('p', cx(styles.timelineDate), ctx.utils.formatDate(item.date, timezone)))
     }
-    entry.append(el('h3', cx(styles.timelineTitle), item.title))
-    entry.append(el('p', cx(styles.timelineStory), item.story))
-    timeline.append(entry)
+    entry.appendChild(el('h3', cx(styles.timelineTitle), item.title))
+    entry.appendChild(el('p', cx(styles.timelineStory), item.story))
+    timeline.appendChild(entry)
   }
-  body.append(timeline)
+  body.appendChild(timeline)
   return true
 }
 
@@ -184,18 +184,18 @@ const renderGallery: SectionRenderer = ({ ctx }, body) => {
         item.caption ?? ctx.data.hosts.primary.fullName,
         cx(styles.galleryImage),
       )
-      if (image !== null) figure.append(image)
+      if (image !== null) figure.appendChild(image)
       if (item.caption !== null && item.caption.length > 0) {
-        figure.append(el('figcaption', cx(styles.galleryCaption), item.caption))
+        figure.appendChild(el('figcaption', cx(styles.galleryCaption), item.caption))
       }
-      grid.append(figure)
+      grid.appendChild(figure)
     }
-    body.append(grid)
+    body.appendChild(grid)
   }
   if (videoUrl !== null) {
     const wrap = el('p', cx(styles.mediaVideo))
-    wrap.append(externalLink(cx(styles.link), videoUrl, ctx.t('galleryTitle')))
-    body.append(wrap)
+    wrap.appendChild(externalLink(cx(styles.link), videoUrl, ctx.t('galleryTitle')))
+    body.appendChild(wrap)
   }
   return true
 }
@@ -209,9 +209,9 @@ const renderGifts: SectionRenderer = ({ ctx, register }, body) => {
     const grid = el('div', cx(styles.giftGrid))
     for (const account of bankAccounts) {
       const card = el('article', cx(styles.giftCard))
-      card.append(el('p', cx(styles.giftBank), account.bankName))
-      card.append(el('p', cx(styles.giftAccount), account.accountNumber))
-      card.append(
+      card.appendChild(el('p', cx(styles.giftBank), account.bankName))
+      card.appendChild(el('p', cx(styles.giftAccount), account.accountNumber))
+      card.appendChild(
         el('p', cx(styles.giftHolder), `${ctx.t('giftAccountHolderLabel')}: ${account.accountHolder}`),
       )
       const copyButton = el('button', cx(styles.copyButton), ctx.t('giftCopy'))
@@ -230,25 +230,25 @@ const renderGifts: SectionRenderer = ({ ctx, register }, body) => {
       }
       copyButton.addEventListener('click', onClick)
       register(() => copyButton.removeEventListener('click', onClick))
-      card.append(copyButton)
-      grid.append(card)
+      card.appendChild(copyButton)
+      grid.appendChild(card)
     }
-    body.append(grid)
+    body.appendChild(grid)
   }
   if (qrisImageKey !== null) {
     const qris = imageOrNull(ctx, qrisImageKey, ctx.t('giftQrisTitle'), cx(styles.qrisImage))
     if (qris !== null) {
       const block = el('div', cx(styles.qrisBlock))
-      block.append(el('h3', cx(styles.subheading), ctx.t('giftQrisTitle')))
-      block.append(qris)
-      body.append(block)
+      block.appendChild(el('h3', cx(styles.subheading), ctx.t('giftQrisTitle')))
+      block.appendChild(qris)
+      body.appendChild(block)
     }
   }
   if (physicalAddress !== null && physicalAddress.length > 0) {
     const address = el('div', cx(styles.giftAddress))
-    address.append(el('h3', cx(styles.subheading), ctx.t('giftAddressTitle')))
-    address.append(el('p', undefined, physicalAddress))
-    body.append(address)
+    address.appendChild(el('h3', cx(styles.subheading), ctx.t('giftAddressTitle')))
+    address.appendChild(el('p', undefined, physicalAddress))
+    body.appendChild(address)
   }
   return true
 }
@@ -270,16 +270,16 @@ const createStats = (ctx: TemplateContext): HTMLElement => {
   ]
   for (const [value, label] of entries) {
     const stat = el('div', cx(styles.stat))
-    stat.append(el('span', cx(styles.statLabel), label))
+    stat.appendChild(el('span', cx(styles.statLabel), label))
     stat.dataset.count = String(value)
-    stats.append(stat)
+    stats.appendChild(stat)
   }
   return stats
 }
 
 const renderRsvp: SectionRenderer = ({ ctx, register }, body) => {
   if (ctx.data.settings.showPublicRsvpStats && ctx.rsvpSummary !== null) {
-    body.append(createStats(ctx))
+    body.appendChild(createStats(ctx))
   }
 
   const maxPax = Math.max(
@@ -296,8 +296,8 @@ const renderRsvp: SectionRenderer = ({ ctx, register }, body) => {
   const nameInput = textInput('text', 'guestName')
   nameInput.value = ctx.guest?.name ?? ''
   nameInput.autocomplete = 'name'
-  nameLabel.append(nameInput)
-  grid.append(nameLabel)
+  nameLabel.appendChild(nameInput)
+  grid.appendChild(nameLabel)
 
   const attendanceLabel = field(ctx.t('rsvpAttendance'))
   const attendanceSelect = document.createElement('select')
@@ -307,10 +307,10 @@ const renderRsvp: SectionRenderer = ({ ctx, register }, body) => {
     const option = document.createElement('option')
     option.value = value
     option.textContent = ctx.t(copyKey)
-    attendanceSelect.append(option)
+    attendanceSelect.appendChild(option)
   }
-  attendanceLabel.append(attendanceSelect)
-  grid.append(attendanceLabel)
+  attendanceLabel.appendChild(attendanceSelect)
+  grid.appendChild(attendanceLabel)
 
   const countLabel = field(ctx.t('rsvpGuestCount'))
   const countInput = textInput('number', 'guestCount')
@@ -319,17 +319,17 @@ const renderRsvp: SectionRenderer = ({ ctx, register }, body) => {
   countInput.step = '1'
   countInput.value = '1'
   countInput.inputMode = 'numeric'
-  countLabel.append(countInput)
-  countLabel.append(el('span', cx(styles.helper), ctx.t('rsvpMaxPax', { count: maxPax })))
-  grid.append(countLabel)
+  countLabel.appendChild(countInput)
+  countLabel.appendChild(el('span', cx(styles.helper), ctx.t('rsvpMaxPax', { count: maxPax })))
+  grid.appendChild(countLabel)
 
   const messageLabel = field(ctx.t('rsvpMessage'))
   const messageInput = document.createElement('textarea')
   messageInput.className = cx(styles.input, styles.textarea)
   messageInput.name = 'message'
   messageInput.rows = 4
-  messageLabel.append(messageInput)
-  grid.append(messageLabel)
+  messageLabel.appendChild(messageInput)
+  grid.appendChild(messageLabel)
 
   const submitButton = el('button', cx(styles.primaryButton), ctx.t('rsvpSubmit'))
   submitButton.type = 'submit'
@@ -407,33 +407,35 @@ const renderRsvp: SectionRenderer = ({ ctx, register }, body) => {
 
   form.addEventListener('submit', onSubmit)
   register(() => form.removeEventListener('submit', onSubmit))
-  form.append(grid, submitButton, status)
-  body.append(form)
+  form.appendChild(grid)
+  form.appendChild(submitButton)
+  form.appendChild(status)
+  body.appendChild(form)
   return true
 }
 
 const renderWishes: SectionRenderer = ({ ctx }, body) => {
   if (!ctx.data.settings.showPublicWishes) return false
   if (ctx.wishes.length === 0) {
-    body.append(el('p', cx(styles.emptyNote), ctx.t('wishesEmpty')))
+    body.appendChild(el('p', cx(styles.emptyNote), ctx.t('wishesEmpty')))
     return true
   }
   const list = el('div', cx(styles.wishes))
   for (const wish of ctx.wishes) {
     const item = el('article', cx(styles.wish))
     const head = el('div', cx(styles.wishHead))
-    head.append(el('h3', cx(styles.wishName), wish.guestName))
-    item.append(head)
-    item.append(el('p', cx(styles.wishMessage), wish.message))
+    head.appendChild(el('h3', cx(styles.wishName), wish.guestName))
+    item.appendChild(head)
+    item.appendChild(el('p', cx(styles.wishMessage), wish.message))
     if (wish.hostReply !== null && wish.hostReply.length > 0) {
       const reply = el('p', cx(styles.wishReply))
-      reply.append(el('span', cx(styles.labelText), ctx.t('hostReply')))
-      reply.append(document.createTextNode(wish.hostReply))
-      item.append(reply)
+      reply.appendChild(el('span', cx(styles.labelText), ctx.t('hostReply')))
+      reply.appendChild(document.createTextNode(wish.hostReply))
+      item.appendChild(reply)
     }
-    list.append(item)
+    list.appendChild(item)
   }
-  body.append(list)
+  body.appendChild(list)
   return true
 }
 
@@ -442,10 +444,10 @@ const renderLiveStream: SectionRenderer = ({ ctx }, body) => {
   if (!live.enabled || live.url === null) return false
   const card = el('div', cx(styles.liveCard))
   if (live.platform !== null && live.platform.length > 0) {
-    card.append(el('p', cx(styles.kitLabel), live.platform))
+    card.appendChild(el('p', cx(styles.kitLabel), live.platform))
   }
-  card.append(externalLink(cx(styles.primaryButton), live.url, ctx.t('watchLive')))
-  body.append(card)
+  card.appendChild(externalLink(cx(styles.primaryButton), live.url, ctx.t('watchLive')))
+  body.appendChild(card)
   return true
 }
 
@@ -455,13 +457,13 @@ const renderSocialKit: SectionRenderer = ({ ctx }, body) => {
   const list = el('div', cx(styles.kitList))
   const appendRow = (label: string, value: string, href?: string): void => {
     const row = el('div', cx(styles.kitRow))
-    row.append(el('span', cx(styles.kitLabel), label))
-    row.append(
+    row.appendChild(el('span', cx(styles.kitLabel), label))
+    row.appendChild(
       href === undefined
         ? el('span', cx(styles.kitValue), value)
         : externalLink(cx(styles.link, styles.kitValue), href, value),
     )
-    list.append(row)
+    list.appendChild(row)
   }
   if (kit.hashtag !== null && kit.hashtag.length > 0) {
     appendRow(ctx.t('hashtagLabel'), kit.hashtag)
@@ -473,7 +475,7 @@ const renderSocialKit: SectionRenderer = ({ ctx }, body) => {
     appendRow(ctx.t('captionLabel'), kit.caption)
   }
   if (list.childElementCount === 0) return false
-  body.append(list)
+  body.appendChild(list)
   return true
 }
 
@@ -484,28 +486,28 @@ const renderTravelInfo: SectionRenderer = ({ ctx }, body) => {
 
   const wrap = el('div', cx(styles.travel))
   if (travel.venueMapUrl !== null) {
-    wrap.append(externalLink(cx(styles.link), travel.venueMapUrl, ctx.t('viewMap')))
+    wrap.appendChild(externalLink(cx(styles.link), travel.venueMapUrl, ctx.t('viewMap')))
   }
   if (travel.hotels.length > 0) {
-    wrap.append(el('h3', cx(styles.subheading), ctx.t('hotelsTitle')))
+    wrap.appendChild(el('h3', cx(styles.subheading), ctx.t('hotelsTitle')))
     const hotelList = el('div', cx(styles.hotelList))
     for (const hotel of travel.hotels) {
       const card = el('article', cx(styles.hotel))
-      card.append(el('h4', cx(styles.hotelName), hotel.name))
-      card.append(el('p', cx(styles.hotelAddress), hotel.address))
+      card.appendChild(el('h4', cx(styles.hotelName), hotel.name))
+      card.appendChild(el('p', cx(styles.hotelAddress), hotel.address))
       const meta = el('div', cx(styles.hotelMeta))
       if (hotel.distanceLabel !== null && hotel.distanceLabel.length > 0) {
-        meta.append(el('span', undefined, hotel.distanceLabel))
+        meta.appendChild(el('span', undefined, hotel.distanceLabel))
       }
       if (hotel.bookingUrl !== null) {
-        meta.append(externalLink(cx(styles.link), hotel.bookingUrl, ctx.t('bookHotel')))
+        meta.appendChild(externalLink(cx(styles.link), hotel.bookingUrl, ctx.t('bookHotel')))
       }
-      card.append(meta)
-      hotelList.append(card)
+      card.appendChild(meta)
+      hotelList.appendChild(card)
     }
-    wrap.append(hotelList)
+    wrap.appendChild(hotelList)
   }
-  body.append(wrap)
+  body.appendChild(wrap)
   return true
 }
 
@@ -515,13 +517,13 @@ const renderEntourage: SectionRenderer = ({ ctx }, body) => {
   const wrap = el('div', cx(styles.entourage))
   for (const group of entourage.groups) {
     const block = el('div')
-    block.append(el('h3', cx(styles.groupTitle), group.title))
+    block.appendChild(el('h3', cx(styles.groupTitle), group.title))
     const list = el('ul', cx(styles.memberList))
-    for (const member of group.members) list.append(el('li', undefined, member))
-    block.append(list)
-    wrap.append(block)
+    for (const member of group.members) list.appendChild(el('li', undefined, member))
+    block.appendChild(list)
+    wrap.appendChild(block)
   }
-  body.append(wrap)
+  body.appendChild(wrap)
   return true
 }
 
@@ -531,16 +533,16 @@ const renderCoHosts: SectionRenderer = ({ ctx }, body) => {
   const wrap = el('div', cx(styles.coHosts))
   for (const coHost of coHosts.items) {
     const card = el('div', cx(styles.coHostCard))
-    card.append(el('span', cx(styles.coHostName), coHost.name))
+    card.appendChild(el('span', cx(styles.coHostName), coHost.name))
     if (coHost.role !== null && coHost.role.length > 0) {
-      card.append(el('span', cx(styles.coHostRole), coHost.role))
+      card.appendChild(el('span', cx(styles.coHostRole), coHost.role))
     }
     if (coHost.whatsappNumber !== null && coHost.whatsappNumber.length > 0) {
-      card.append(el('span', cx(styles.coHostPhone), coHost.whatsappNumber))
+      card.appendChild(el('span', cx(styles.coHostPhone), coHost.whatsappNumber))
     }
-    wrap.append(card)
+    wrap.appendChild(card)
   }
-  body.append(wrap)
+  body.appendChild(wrap)
   return true
 }
 
@@ -548,28 +550,28 @@ const renderAdditionalNotes: SectionRenderer = ({ ctx }, body) => {
   const notes = ctx.data.modules.additionalNotes
   if (!notes.enabled || notes.notes.length === 0) return false
   const list = el('ul', cx(styles.notes))
-  for (const note of notes.notes) list.append(el('li', cx(styles.noteItem), note))
-  body.append(list)
+  for (const note of notes.notes) list.appendChild(el('li', cx(styles.noteItem), note))
+  body.appendChild(list)
   return true
 }
 
 const renderClosing: SectionRenderer = ({ ctx }, body) => {
   const { closing } = ctx.data
   const wrap = el('div', cx(styles.closing))
-  wrap.append(el('p', cx(styles.closingMessage), closing.message))
+  wrap.appendChild(el('p', cx(styles.closingMessage), closing.message))
   if (closing.happyFamilies.length > 0) {
-    wrap.append(el('h3', cx(styles.subheading), ctx.t('happyFamiliesTitle')))
+    wrap.appendChild(el('h3', cx(styles.subheading), ctx.t('happyFamiliesTitle')))
     const families = el('div', cx(styles.families))
     for (const family of closing.happyFamilies) {
       const card = el('div', cx(styles.family))
       const photo = imageOrNull(ctx, family.photoKey, family.name, cx(styles.familyImage))
-      if (photo !== null) card.append(photo)
-      card.append(el('span', cx(styles.familyName), family.name))
-      families.append(card)
+      if (photo !== null) card.appendChild(photo)
+      card.appendChild(el('span', cx(styles.familyName), family.name))
+      families.appendChild(card)
     }
-    wrap.append(families)
+    wrap.appendChild(families)
   }
-  body.append(wrap)
+  body.appendChild(wrap)
   return true
 }
 
@@ -627,25 +629,25 @@ const createGate = (ctx: TemplateContext, options: GateOptions): HTMLElement => 
   const panel = el('div', cx(styles.gatePanel))
   const topOrnament = el('div', cx(styles.gateOrnament))
   topOrnament.setAttribute('aria-hidden', 'true')
-  panel.append(topOrnament)
-  panel.append(el('h1', cx(styles.gateTitle), options.title))
+  panel.appendChild(topOrnament)
+  panel.appendChild(el('h1', cx(styles.gateTitle), options.title))
   if (options.dateLabel.length > 0) {
-    panel.append(el('p', cx(styles.gateDate), options.dateLabel))
+    panel.appendChild(el('p', cx(styles.gateDate), options.dateLabel))
   }
   if (options.guestName !== null && options.guestName.length > 0) {
-    panel.append(el('p', cx(styles.gateGuest), options.guestName))
+    panel.appendChild(el('p', cx(styles.gateGuest), options.guestName))
   }
   const bottomOrnament = el('div', cx(styles.gateOrnament))
   bottomOrnament.setAttribute('aria-hidden', 'true')
-  panel.append(bottomOrnament)
+  panel.appendChild(bottomOrnament)
 
   const pinRequired = options.pinCode !== null && options.pinCode.length > 0
   if (pinRequired) {
-    panel.append(el('p', cx(styles.subheading), ctx.t('pinTitle')))
+    panel.appendChild(el('p', cx(styles.subheading), ctx.t('pinTitle')))
     const form = el('form', cx(styles.pinForm))
     const label = document.createElement('label')
     label.className = cx(styles.pinLabel)
-    label.append(el('span', cx(styles.labelText), ctx.t('pinLabel')))
+    label.appendChild(el('span', cx(styles.labelText), ctx.t('pinLabel')))
     const input = document.createElement('input')
     input.className = cx(styles.pinInput)
     input.type = 'password'
@@ -653,14 +655,15 @@ const createGate = (ctx: TemplateContext, options: GateOptions): HTMLElement => 
     input.autocomplete = 'one-time-code'
     input.maxLength = 6
     input.required = true
-    label.append(input)
-    form.append(label)
+    label.appendChild(input)
+    form.appendChild(label)
 
     const error = el('p', cx(styles.gateError))
     error.setAttribute('role', 'alert')
     const submit = el('button', cx(styles.primaryButton), ctx.t('pinSubmit'))
     submit.type = 'submit'
-    form.append(submit, error)
+    form.appendChild(submit)
+    form.appendChild(error)
 
     const onSubmit = (event: SubmitEvent): void => {
       event.preventDefault()
@@ -674,7 +677,7 @@ const createGate = (ctx: TemplateContext, options: GateOptions): HTMLElement => 
     }
     form.addEventListener('submit', onSubmit)
     options.register(() => form.removeEventListener('submit', onSubmit))
-    panel.append(form)
+    panel.appendChild(form)
   } else {
     const open = el('button', cx(styles.primaryButton), ctx.t('openInvitation'))
     open.type = 'button'
@@ -684,11 +687,11 @@ const createGate = (ctx: TemplateContext, options: GateOptions): HTMLElement => 
     }
     open.addEventListener('click', onClick)
     options.register(() => open.removeEventListener('click', onClick))
-    panel.append(open)
+    panel.appendChild(open)
   }
 
-  panel.append(el('p', cx(styles.gateHint), ctx.t('openHint')))
-  gate.append(panel)
+  panel.appendChild(el('p', cx(styles.gateHint), ctx.t('openHint')))
+  gate.appendChild(panel)
   return gate
 }
 
@@ -698,28 +701,28 @@ const createHero = (
   dateLabel: string,
 ): HTMLElement => {
   const hero = el('header', cx(styles.hero))
-  hero.append(el('h1', cx(styles.heroName), coupleName))
+  hero.appendChild(el('h1', cx(styles.heroName), coupleName))
 
   const ornament = el('div', cx(styles.heroOrnament))
   ornament.setAttribute('aria-hidden', 'true')
-  hero.append(ornament)
+  hero.appendChild(ornament)
 
-  if (dateLabel.length > 0) hero.append(el('p', cx(styles.heroDate), dateLabel))
+  if (dateLabel.length > 0) hero.appendChild(el('p', cx(styles.heroDate), dateLabel))
 
   const firstEvent = ctx.data.events[0]
-  if (firstEvent !== undefined) hero.append(el('p', cx(styles.heroVenue), firstEvent.venueName))
+  if (firstEvent !== undefined) hero.appendChild(el('p', cx(styles.heroVenue), firstEvent.venueName))
 
   if (ctx.data.accessControl.isPrivatePinEnabled) {
-    hero.append(el('p', cx(styles.privateLabel), ctx.t('privateLabel')))
+    hero.appendChild(el('p', cx(styles.privateLabel), ctx.t('privateLabel')))
   }
 
   const qrToken = ctx.guest?.qrToken ?? null
   if (ctx.data.modules.enableQrCheckin && qrToken !== null && qrToken.length > 0) {
     const note = el('div', cx(styles.qrNote))
-    note.append(el('p', cx(styles.qrTitle), ctx.t('qrCheckinTitle')))
-    note.append(el('p', cx(styles.qrToken), qrToken))
-    note.append(el('p', cx(styles.gateHint), ctx.t('qrCheckinNote')))
-    hero.append(note)
+    note.appendChild(el('p', cx(styles.qrTitle), ctx.t('qrCheckinTitle')))
+    note.appendChild(el('p', cx(styles.qrToken), qrToken))
+    note.appendChild(el('p', cx(styles.gateHint), ctx.t('qrCheckinNote')))
+    hero.appendChild(note)
   }
 
   return hero
@@ -727,9 +730,9 @@ const createHero = (
 
 const createFooter = (ctx: TemplateContext, coupleName: string): HTMLElement => {
   const footer = el('footer', cx(styles.footer))
-  footer.append(el('p', cx(styles.footerMark), coupleName))
+  footer.appendChild(el('p', cx(styles.footerMark), coupleName))
   if (!ctx.data.settings.hidePlatformWatermark) {
-    footer.append(el('p', cx(styles.watermark), ctx.t('poweredBy')))
+    footer.appendChild(el('p', cx(styles.watermark), ctx.t('poweredBy')))
   }
   return footer
 }
@@ -752,7 +755,7 @@ export const mount: TemplateMountFn = (container, ctx) => {
   const root = el('div', cx(styles.root))
   root.dataset.template = 'keraton-heritage'
   root.dataset.reducedMotion = ctx.state.reducedMotion ? 'true' : 'false'
-  container.append(root)
+  container.appendChild(root)
 
   let audio: HTMLAudioElement | null = null
   const audioSource = ctx.utils.resolveMediaUrl(ctx.data.media.audioKey)
@@ -762,7 +765,7 @@ export const mount: TemplateMountFn = (container, ctx) => {
     node.preload = 'auto'
     node.hidden = true
     node.src = audioSource
-    root.append(node)
+    root.appendChild(node)
     audio = node
   }
 
@@ -778,11 +781,11 @@ export const mount: TemplateMountFn = (container, ctx) => {
   }
 
   if (ctx.state.isPreview) {
-    root.append(el('div', cx(styles.previewBadge), ctx.t('previewBadge')))
+    root.appendChild(el('div', cx(styles.previewBadge), ctx.t('previewBadge')))
   }
 
   const paper = el('main', cx(styles.paper))
-  root.append(paper)
+  root.appendChild(paper)
   const secondaryName = ctx.data.hosts.secondary?.fullName ?? null
   const coupleName =
     secondaryName === null
@@ -791,7 +794,7 @@ export const mount: TemplateMountFn = (container, ctx) => {
   const firstEvent = ctx.data.events[0]
   const dateLabel =
     firstEvent === undefined ? '' : ctx.utils.formatDate(firstEvent.startsAt, firstEvent.timezone)
-  paper.append(createHero(ctx, coupleName, dateLabel))
+  paper.appendChild(createHero(ctx, coupleName, dateLabel))
 
   for (const sectionId of ctx.appearance.sectionOrder) {
     if (ctx.appearance.hiddenSections.includes(sectionId)) continue
@@ -806,7 +809,7 @@ export const mount: TemplateMountFn = (container, ctx) => {
 
     const titleKey = SECTION_TITLE_KEYS[sectionId]
     if (titleKey !== undefined) {
-      section.append(
+      section.appendChild(
         el(
           'h2',
           cx(styles.sectionTitle),
@@ -815,14 +818,14 @@ export const mount: TemplateMountFn = (container, ctx) => {
       )
       const ornament = el('div', cx(styles.sectionOrnament))
       ornament.setAttribute('aria-hidden', 'true')
-      section.append(ornament)
+      section.appendChild(ornament)
     }
 
-    section.append(body)
-    paper.append(section)
+    section.appendChild(body)
+    paper.appendChild(section)
   }
 
-  paper.append(createFooter(ctx, coupleName))
+  paper.appendChild(createFooter(ctx, coupleName))
 
   let opened = ctx.state.isOpened
   const unlock = (): void => {
@@ -834,7 +837,7 @@ export const mount: TemplateMountFn = (container, ctx) => {
   }
 
   if (gateRequired) {
-    root.append(
+    root.appendChild(
       createGate(ctx, {
         title: coupleName,
         dateLabel,
