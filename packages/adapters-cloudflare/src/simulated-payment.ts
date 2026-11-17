@@ -185,6 +185,8 @@ const parseCallbackPayload = (bytes: Uint8Array): VerifiedCallbackPayload => {
  * exactly what the real webhook handler needs.
  */
 export class SimulatedPaymentAdapter implements PaymentGatewayPort {
+  readonly provider: PaymentProvider = 'SIMULATED'
+
   private readonly secret: string
   private readonly checkoutTtlMs: number
   private readonly clock: ClockPort
