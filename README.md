@@ -103,10 +103,16 @@ on the server so link previews work.
 
 ## Dependencies and audit
 
-`pnpm audit` reports no known vulnerabilities. One advisory
-(GHSA-67mh-4wv8-2f99, esbuild <= 0.24.2) used to appear through `drizzle-kit`'s
-dev-only `@esbuild-kit` transpiler; `pnpm-workspace.yaml` now pins that single
-edge so it no longer ships:
+`pnpm audit` reports one high advisory with no patched release:
+GHSA-fc5q-39xc-vjpf (picomatch <= 4.0.7, ReDoS). Every path is build-time
+tooling — TanStack Router's generator and devtools plugin plus `tinyglobby`
+file discovery — and 4.0.7 is the newest published version, so no override can
+clear it yet. No Worker runtime code imports picomatch. Revisit when a fixed
+release exists.
+
+The earlier GHSA-67mh-4wv8-2f99 (esbuild <= 0.24.2) came through
+`drizzle-kit`'s dev-only `@esbuild-kit` transpiler; `pnpm-workspace.yaml` pins
+that single edge so it no longer ships:
 
 ```yaml
 overrides:
