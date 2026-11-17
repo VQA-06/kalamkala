@@ -45,10 +45,13 @@ export function ThemePreview({
   onOpened,
 }: ThemePreviewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const viewportRef = useRef<HTMLDivElement | null>(null)
   const openedRef = useRef(false)
   const restoreScrollRef = useRef<number | null>(null)
+  const restoreInnerScrollRef = useRef<number | null>(null)
   const onOpenedRef = useRef(onOpened)
   const [phase, setPhase] = useState<'loading' | 'ready' | 'error'>('loading')
+  const [opened, setOpened] = useState(false)
 
   const [paletteId, setPaletteId] = useState(() => {
     const requested =
@@ -115,6 +118,7 @@ export function ThemePreview({
           actions: {
             openInvitation: () => {
               openedRef.current = true
+              setOpened(true)
               onOpenedRef.current?.()
             },
             submitRsvp: async () => ({ ok: false, error: PREVIEW_RSVP_ERROR }),
@@ -124,13 +128,25 @@ export function ThemePreview({
           },
         })
 
-        cleanup = template.mount(container, context)
+        const previousBodyOverflow = document.body.style.overflow
+        try {
+          cleanup = template.mount(container, context)
+        } finally {
+          // The theme locks the body for its fixed gate; embedded previews must
+          // not freeze the host page. Catalog modals keep their own prior value.
+          document.body.style.overflow = previousBodyOverflow
+        }
         setPhase('ready')
 
         const target = restoreScrollRef.current
-        if (target !== null) {
-          restoreScrollRef.current = null
-          window.requestAnimationFrame(() => window.scrollTo({ top: target }))
+        const innerTarget = restoreInnerScrollRef.current
+        restoreScrollRef.current = null
+        restoreInnerScrollRef.current = null
+        if (target !== null || innerTarget !== null) {
+          window.requestAnimationFrame(() => {
+            if (target !== null) window.scrollTo({ top: target })
+            if (innerTarget !== null) viewportRef.current?.scrollTo({ top: innerTarget })
+          })
         }
       })
       .catch(() => {
@@ -150,6 +166,7 @@ export function ThemePreview({
   const selectPalette = (nextId: string): void => {
     if (nextId === paletteId) return
     restoreScrollRef.current = window.scrollY
+    restoreInnerScrollRef.current = viewportRef.current?.scrollTop ?? 0
     setPaletteId(nextId)
   }
 
@@ -194,19 +211,33 @@ export function ThemePreview({
         </div>
       ) : null}
 
-      <div className="mx-auto w-full min-w-[320px] max-w-[430px] overflow-hidden border border-line bg-paper shadow-[0_18px_40px_rgba(24,20,16,0.08)]">
-        <div ref={containerRef} className="min-h-[60vh]" />
+      <div className="mx-auto w-full max-w-[430px] border border-line bg-paper shadow-[0_18px_40px_rgba(24,20,16,0.08)]">
+        <div
+          ref={viewportRef}
+          className={`relative h-[clamp(520px,78vh,820px)] ${
+            opened ? 'overflow-y-auto' : 'overflow-hidden'
+          }`}
+          style={{ transform: 'translateZ(0)' }}
+        >
+          <div ref={containerRef} className="min-h-full" />
 
-        {phase === 'loading' && !unavailable ? (
-          <p className="px-6 py-4 text-center text-sm text-ink/60" role="status">
-            Menyiapkan pratinjau…
-          </p>
-        ) : null}
-        {phase === 'error' || unavailable ? (
-          <p className="px-6 py-4 text-center text-sm leading-6 text-ink/70" role="status">
-            Pratinjau tema gagal dimuat.
-          </p>
-        ) : null}
+          {phase === 'loading' && !unavailable ? (
+            <p
+              className="absolute inset-x-0 top-6 px-6 text-center text-sm text-ink/60"
+              role="status"
+            >
+              Menyiapkan pratinjau…
+            </p>
+          ) : null}
+          {phase === 'error' || unavailable ? (
+            <p
+              className="absolute inset-x-0 top-6 px-6 text-center text-sm leading-6 text-ink/70"
+              role="status"
+            >
+              Pratinjau tema gagal dimuat.
+            </p>
+          ) : null}
+        </div>
       </div>
     </div>
   )
