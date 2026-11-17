@@ -10,6 +10,8 @@ import {
 
 import { templateRegistry } from './registry.js'
 import { createTemplateContext } from './sdk/index.js'
+import reactStarterPreview from './_starters/react/preview.json'
+import vanillaStarterPreview from './_starters/vanilla/preview.json'
 
 type RegistryEntry = (typeof templateRegistry)[number]
 
@@ -182,6 +184,26 @@ describe('template media contract', () => {
       cleanup?.()
       container.remove()
       document.body.style.overflow = beforeOverflow
+    }
+  })
+})
+
+describe('starter preview contract', () => {
+  it('validates every starter preview against the master schema', () => {
+    const starters = [
+      ['react', reactStarterPreview],
+      ['vanilla', vanillaStarterPreview],
+    ] as const
+
+    for (const [name, preview] of starters) {
+      const result = MasterInvitationSchema.safeParse(preview)
+
+      expect(
+        result.success,
+        `${name} starter preview.json tidak valid: ${
+          result.success ? '' : formatIssues(result.error.issues)
+        }`,
+      ).toBe(true)
     }
   })
 })
