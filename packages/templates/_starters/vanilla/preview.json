@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "eventCategory": "WEDDING",
+  "seoMeta": {
+    "title": "Undangan Pernikahan Putri & Bagas",
+    "description": "Undangan pernikahan Putri dan Bagas. Konfirmasi kehadiran dan kirimkan doa untuk kami.",
+    "ogLandscapePhotoKey": null
+  },
+  "settings": {
+    "locale": "id",
+    "showPublicRsvpStats": true,
+    "showPublicWishes": true,
+    "hidePlatformWatermark": false
+  },
+  "accessControl": {
+    "isPrivatePinEnabled": false,
+    "pinCode": null,
+    "strictGuestListOnly": false,
+    "defaultMaxPaxPerGuest": 2
+  },
+  "opening": {
+    "headline": "Putri & Bagas",
+    "subheadline": "Sabtu, 12 Desember 2026",
+    "quote": "Dan di antara tanda-tanda kebesaran-Nya, Dia menciptakan pasangan untukmu.",
+    "quoteSource": "Ar-Rum: 21"
+  },
+  "hosts": {
+    "displayOrder": ["primary", "secondary"],
+    "primary": {
+      "fullName": "Putri Amara",
+      "nickname": "Putri",
+      "fatherName": "Bapak Sutrisno",
+      "motherName": "Ibu Lestari",
+      "photoKey": null,
+      "instagramHandle": "putri.amara"
+    },
+    "secondary": {
+      "fullName": "Bagas Prasetyo",
+      "nickname": "Bagas",
+      "fatherName": "Bapak Hartono",
+      "motherName": "Ibu Wulandari",
+      "photoKey": null,
+      "instagramHandle": "bagas.prasetyo"
+    }
+  },
+  "events": [
+    {
+      "id": "akad",
+      "name": "Akad Nikah",
+      "startsAt": "2026-12-12T08:00:00+07:00",
+      "endsAt": "2026-12-12T10:00:00+07:00",
+      "timezone": "WIB",
+      "venueName": "Masjid Al-Hikmah",
+      "address": "Jalan Diponegoro 12, Bandung",
+      "mapsUrl": null,
+      "dressCode": "Tenun"
+    },
+    {
+      "id": "resepsi",
+      "name": "Resepsi",
+      "startsAt": "2026-12-12T11:00:00+07:00",
+      "endsAt": "2026-12-12T14:00:00+07:00",
+      "timezone": "WIB",
+      "venueName": "Gedung Sate",
+      "address": "Jalan Diponegoro 22, Bandung",
+      "mapsUrl": null,
+      "dressCode": null
+    }
+  ],
+  "media": {
+    "gallery": [],
+    "videoUrl": null,
+    "audioKey": null
+  },
+  "gifts": {
+    "bankAccounts": [],
+    "qrisImageKey": null,
+    "physicalAddress": null
+  },
+  "closing": {
+    "message": "Terima kasih atas doa dan kehadiran Anda.",
+    "happyFamilies": []
+  },
+  "modules": {
+    "loveStory": {
+      "enabled": false,
+      "items": []
+    },
+    "liveStream": {
+      "enabled": false,
+      "url": null,
+      "platform": null
+    },
+    "socialKit": {
+      "enabled": false,
+      "hashtag": null,
+      "instagramFilterUrl": null,
+      "caption": null
+    },
+    "travelInfo": {
+      "enabled": false,
+      "venueMapUrl": null,
+      "hotels": []
+    },
+    "entourage": {
+      "enabled": false,
+      "groups": []
+    },
+    "coHosts": {
+      "enabled": false,
+      "items": []
+    },
+    "additionalNotes": {
+      "enabled": false,
+      "notes": []
+    },
+    "enableQrCheckin": false
+  }
+}
